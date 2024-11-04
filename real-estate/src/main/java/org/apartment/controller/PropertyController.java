@@ -18,7 +18,7 @@ public class PropertyController {
     private PropertyService propertyService;
 
     @PostMapping
-    public ResponseEntity<Property> createProperty(@RequestBody PropertyDto propertyDto) {
+    public ResponseEntity<Property> createProperty(@RequestBody @Valid PropertyDto propertyDto) {
         Property property = PropertyMapper.INSTANCE.toEntity(propertyDto);
         Property createdProperty = propertyService.createProperty(property);
         return ResponseEntity.ok(createdProperty);
