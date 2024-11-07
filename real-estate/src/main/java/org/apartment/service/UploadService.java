@@ -43,7 +43,7 @@ public class UploadService {
                 .map(file -> CompletableFuture.supplyAsync(() -> {
                     String originalFilename = file.getOriginalFilename();
                     try {
-                        String uniqueFileName = UUID.randomUUID() + "-" + originalFilename;
+                        String uniqueFileName = UUID.randomUUID().toString();
 
                         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                                 .bucket(bucketName)
