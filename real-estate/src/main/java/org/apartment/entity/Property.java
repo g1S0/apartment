@@ -1,14 +1,17 @@
 package org.apartment.entity;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Data
 @Table(name = "property")
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -45,6 +48,10 @@ public class Property {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<PropertyImage> images;
 
     @PrePersist
     protected void onCreate() {

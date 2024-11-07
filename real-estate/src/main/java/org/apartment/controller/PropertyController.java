@@ -8,6 +8,7 @@ import org.apartment.mapper.PropertyMapper;
 import org.apartment.service.PropertyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,9 +19,12 @@ public class PropertyController {
     private PropertyService propertyService;
 
     @PostMapping
-    public ResponseEntity<Property> createProperty(@RequestBody @Valid PropertyDto propertyDto) {
+    public ResponseEntity<Property> createProperty(
+            @RequestPart("data") @Valid PropertyDto propertyDto,
+            @RequestParam("image") MultipartFile[] imageFiles
+    ) throws Exception {
         Property property = PropertyMapper.INSTANCE.toEntity(propertyDto);
-        Property createdProperty = propertyService.createProperty(property);
+        Property createdProperty = propertyService.createProperty(property, imageFiles);
         return ResponseEntity.ok(createdProperty);
     }
 

@@ -5,11 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apartment.entity.PropertyImage;
 import org.apartment.entity.PropertyStatus;
 import org.apartment.entity.PropertyType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Data
@@ -39,6 +41,8 @@ public class PropertyDto {
 
     @NotNull(message = "Posted by is required")
     private Long postedBy;
+
+    private List<PropertyImage> images;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
