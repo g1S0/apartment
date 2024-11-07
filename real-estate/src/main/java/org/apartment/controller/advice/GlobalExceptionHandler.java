@@ -2,6 +2,7 @@ package org.apartment.controller.advice;
 
 import jakarta.validation.ConstraintViolationException;
 import org.apartment.dto.ResponseDto;
+import org.apartment.exception.FileValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -40,5 +41,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResponseDto<String>> handleGenericException(Exception e) {
         ResponseDto<String> response = new ResponseDto<>("An unexpected error occurred: " + e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(FileValidationException.class)
+    public ResponseEntity<String> handleFileValidationException(FileValidationException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 }
