@@ -1,5 +1,6 @@
 package org.apartment.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apartment.exception.FileValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UploadService {
     private final S3Client s3Client;
     private final String s3StorageEndpoint;
@@ -37,12 +39,17 @@ public class UploadService {
     }
 
     public List<String> uploadFiles(MultipartFile[] files) throws Exception {
+        log.info("Starting file upload. Total files to upload: {}", files.length);
+
         validateFiles(files);
+        log.info("File validation completed successfully.");
 
         List<CompletableFuture<String>> uploadFutures = Arrays.stream(files)
                 .map(file -> CompletableFuture.supplyAsync(() -> {
                     String originalFilename = file.getOriginalFilename();
                     try {
+                        log.info("Uploading file: {}", originalFilename);
+
                         String uniqueFileName = UUID.randomUUID().toString();
 
                         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -51,21 +58,32 @@ public class UploadService {
                                 .build();
 
                         try (InputStream inputStream = file.getInputStream()) {
+                            log.debug("Starting upload to S3 for file: {}", originalFilename);
                             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, file.getSize()));
+                            log.debug("Upload completed for file: {}", originalFilename);
                         }
 
-                        return String.format("%s/%s/%s", s3StorageEndpoint, bucketName, uniqueFileName);
+                        String fileUrl = String.format("%s/%s/%s", s3StorageEndpoint, bucketName, uniqueFileName);
+                        log.info("File uploaded successfully. File URL: {}", fileUrl);
+
+                        return fileUrl;
                     } catch (Exception e) {
+                        log.error("Error while uploading file: {}", originalFilename, e);
                         throw new RuntimeException("Error while uploading file: " + originalFilename, e);
                     }
                 }))
                 .toList();
 
+        log.info("Waiting for all uploads to complete...");
         CompletableFuture.allOf(uploadFutures.toArray(new CompletableFuture[0])).join();
+        log.info("All file uploads completed successfully.");
 
-        return uploadFutures.stream()
+        List<String> fileUrls = uploadFutures.stream()
                 .map(CompletableFuture::join)
                 .collect(Collectors.toList());
+
+        log.info("Returning file URLs: {}", fileUrls);
+        return fileUrls;
     }
 
     private void validateFiles(MultipartFile[] files) throws FileValidationException {
