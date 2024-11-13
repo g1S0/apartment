@@ -1,11 +1,11 @@
 package org.apartment.auth.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apartment.auth.dto.AuthenticationRequestDto;
 import org.apartment.auth.dto.AuthenticationResponseDto;
 import org.apartment.auth.entity.Token;
-import org.apartment.auth.entity.TokenType;
 import org.apartment.auth.entity.User;
 import org.apartment.auth.repository.TokenRepository;
 import org.apartment.auth.repository.UserRepository;
@@ -21,16 +21,17 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @Slf4j
 public class AuthService {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    @Transactional
     public AuthenticationResponseDto register(User user) {
         log.debug("Registering user with email: {}", user.getEmail());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        var savedUser = repository.save(user);
+        var savedUser = userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         saveUserToken(savedUser, jwtToken);
@@ -42,6 +43,7 @@ public class AuthService {
                 .build();
     }
 
+    @Transactional
     public AuthenticationResponseDto authenticate(AuthenticationRequestDto request) {
         log.debug("Authenticating user with email: {}", request.getEmail());
         authenticationManager.authenticate(
@@ -50,7 +52,7 @@ public class AuthService {
                         request.getPassword()
                 )
         );
-        var user = repository.findByEmail(request.getEmail())
+        var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
@@ -69,8 +71,6 @@ public class AuthService {
         var token = Token.builder()
                 .user(user)
                 .token(jwtToken)
-                .tokenType(TokenType.BEARER)
-                .expired(false)
                 .revoked(false)
                 .build();
         tokenRepository.save(token);
@@ -81,10 +81,7 @@ public class AuthService {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validUserTokens.isEmpty())
             return;
-        validUserTokens.forEach(token -> {
-            token.setExpired(true);
-            token.setRevoked(true);
-        });
+        validUserTokens.forEach(token -> token.setRevoked(true));
         tokenRepository.saveAll(validUserTokens);
     }
 
@@ -100,7 +97,7 @@ public class AuthService {
         String userEmail = jwtService.extractUsername(refreshToken);
 
         if (userEmail != null) {
-            var user = this.repository.findByEmail(userEmail)
+            var user = this.userRepository.findByEmail(userEmail)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
             if (jwtService.isTokenValid(refreshToken, user)) {

@@ -1,6 +1,5 @@
 package org.apartment.auth.service;
 
-
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.util.ReflectionTestUtils;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.security.SignatureException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -57,9 +56,7 @@ class JwtServiceTest {
         when(userDetails.getUsername()).thenReturn("test@gmail.com");
         String token = jwtService.generateToken(userDetails);
         String invalidToken = token + "modified";
-        assertThrows(SignatureException.class, () -> {
-            jwtService.extractUsername(invalidToken);
-        });
+        assertThrows(SignatureException.class, () -> jwtService.extractUsername(invalidToken));
     }
 
 
