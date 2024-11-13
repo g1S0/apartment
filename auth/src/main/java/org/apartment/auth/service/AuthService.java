@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import org.apartment.auth.dto.AuthenticationRequestDto;
 import org.apartment.auth.dto.AuthenticationResponseDto;
 import org.apartment.auth.entity.Token;
-import org.apartment.auth.entity.TokenType;
 import org.apartment.auth.entity.User;
 import org.apartment.auth.repository.TokenRepository;
 import org.apartment.auth.repository.UserRepository;
@@ -69,8 +68,6 @@ public class AuthService {
         var token = Token.builder()
                 .user(user)
                 .token(jwtToken)
-                .tokenType(TokenType.BEARER)
-                .expired(false)
                 .revoked(false)
                 .build();
         tokenRepository.save(token);
@@ -82,7 +79,6 @@ public class AuthService {
         if (validUserTokens.isEmpty())
             return;
         validUserTokens.forEach(token -> {
-            token.setExpired(true);
             token.setRevoked(true);
         });
         tokenRepository.saveAll(validUserTokens);
