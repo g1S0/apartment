@@ -20,34 +20,30 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AuthController {
 
-    private final AuthService service;
+  private final AuthService service;
 
-    public AuthController(AuthService service) {
-        this.service = service;
-    }
+  public AuthController(AuthService service) {
+    this.service = service;
+  }
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponseDto> addNewUser(
-            @RequestBody @Valid RegisterRequestDto registerRequest
-    ) {
-        User user = RegisterMapper.INSTANCE.toEntity(registerRequest);
+  @PostMapping("/register")
+  public ResponseEntity<AuthenticationResponseDto> addNewUser(
+      @RequestBody @Valid RegisterRequestDto registerRequest) {
+    User user = RegisterMapper.INSTANCE.toEntity(registerRequest);
 
-        return ResponseEntity.ok(service.register(user));
-    }
+    return ResponseEntity.ok(service.register(user));
+  }
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponseDto> authenticate(
-            @RequestBody @Valid AuthenticationRequestDto request
-    ) {
-        return ResponseEntity.ok(service.authenticate(request));
-    }
+  @PostMapping("/authenticate")
+  public ResponseEntity<AuthenticationResponseDto> authenticate(
+      @RequestBody @Valid AuthenticationRequestDto request) {
+    return ResponseEntity.ok(service.authenticate(request));
+  }
 
-    @PostMapping("/refresh-token")
-    public ResponseEntity<AuthenticationResponseDto> refreshToken(
-            HttpServletRequest request
-    ) {
-        AuthenticationResponseDto authResponse = service.refreshToken(request);
+  @PostMapping("/refresh-token")
+  public ResponseEntity<AuthenticationResponseDto> refreshToken(HttpServletRequest request) {
+    AuthenticationResponseDto authResponse = service.refreshToken(request);
 
-        return ResponseEntity.ok(authResponse);
-    }
+    return ResponseEntity.ok(authResponse);
+  }
 }
