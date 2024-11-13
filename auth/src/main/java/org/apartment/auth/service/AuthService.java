@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @Slf4j
 public class AuthService {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -29,7 +29,7 @@ public class AuthService {
     public AuthenticationResponseDto register(User user) {
         log.debug("Registering user with email: {}", user.getEmail());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        var savedUser = repository.save(user);
+        var savedUser = userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         saveUserToken(savedUser, jwtToken);
@@ -49,7 +49,7 @@ public class AuthService {
                         request.getPassword()
                 )
         );
-        var user = repository.findByEmail(request.getEmail())
+        var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
@@ -96,7 +96,7 @@ public class AuthService {
         String userEmail = jwtService.extractUsername(refreshToken);
 
         if (userEmail != null) {
-            var user = this.repository.findByEmail(userEmail)
+            var user = this.userRepository.findByEmail(userEmail)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
             if (jwtService.isTokenValid(refreshToken, user)) {
