@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apartment.auth.repository.TokenRepository;
 import org.apartment.auth.service.JwtService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final String BEARER_PREFIX = "Bearer ";
     private final int BEARER_PREFIX_LENGTH = BEARER_PREFIX.length();
 
-    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService, TokenRepository tokenRepository) {
+    public JwtAuthenticationFilter(JwtService jwtService, @Lazy UserDetailsService userDetailsService, TokenRepository tokenRepository) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
         this.tokenRepository = tokenRepository;
