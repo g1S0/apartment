@@ -8,6 +8,7 @@
     <name>apartment_rent</name>
     <modules>
         <module>auth</module>
+        <module>real-estate</module>
     </modules>
 
     <properties>
