@@ -28,8 +28,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Property
-{
+public class Property {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -68,15 +67,13 @@ public class Property
   private List<PropertyImage> images;
 
   @PrePersist
-  protected void onCreate()
-  {
+  protected void onCreate() {
     createdAt = LocalDateTime.now();
     updatedAt = LocalDateTime.now();
   }
 
   @PreUpdate
-  protected void onUpdate()
-  {
+  protected void onUpdate() {
     updatedAt = LocalDateTime.now();
   }
 }

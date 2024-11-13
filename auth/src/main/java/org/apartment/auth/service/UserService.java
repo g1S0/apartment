@@ -13,26 +13,22 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserService
-{
+public class UserService {
 
   private final PasswordEncoder passwordEncoder;
   private final UserRepository repository;
 
-  public void changePassword(ChangePasswordRequestDto request, Principal connectedUser)
-  {
+  public void changePassword(ChangePasswordRequestDto request, Principal connectedUser) {
     var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
     log.debug("Attempting to change password for user: {}", user.getEmail());
 
-    if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword()))
-    {
+    if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
       log.error("Failed to change password: current password does not match for user: {}",
           user.getEmail());
       throw new IllegalStateException("Wrong password");
     }
 
-    if (!request.getNewPassword().equals(request.getConfirmationPassword()))
-    {
+    if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
       log.error(
           "Failed to change password: new password and confirmation do not match for user: {}",
           user.getEmail());

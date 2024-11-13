@@ -22,46 +22,38 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
 @Slf4j
-public class UploadService
-{
+public class UploadService {
   private static final Set<String> ALLOWED_EXTENSIONS = Set.of("jpg", "jpeg");
   private final S3Client s3Client;
   private final String s3StorageEndpoint;
   private final String bucketName;
 
   @Autowired
-  public UploadService(S3Client s3Client,
-                       @Value("${aws.s3.endpoint}") String s3StorageEndpoint,
-                       @Value("${aws.s3.bucket-name}") String bucketName)
-  {
+  public UploadService(S3Client s3Client, @Value("${aws.s3.endpoint}") String s3StorageEndpoint,
+                       @Value("${aws.s3.bucket-name}") String bucketName) {
     this.s3Client = s3Client;
     this.s3StorageEndpoint = s3StorageEndpoint;
     this.bucketName = bucketName;
   }
 
-  public List<String> uploadFiles(MultipartFile[] files) throws Exception
-  {
+  public List<String> uploadFiles(MultipartFile[] files) throws Exception {
     log.info("Starting file upload. Total files to upload: {}", files.length);
 
     validateFiles(files);
     log.info("File validation completed successfully.");
 
-    List<CompletableFuture<String>> uploadFutures = Arrays.stream(files)
-        .map(file -> CompletableFuture.supplyAsync(() -> {
+    List<CompletableFuture<String>> uploadFutures =
+        Arrays.stream(files).map(file -> CompletableFuture.supplyAsync(() -> {
           String originalFilename = file.getOriginalFilename();
-          try
-          {
+          try {
             log.info("Uploading file: {}", originalFilename);
 
             String uniqueFileName = UUID.randomUUID().toString();
 
-            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(uniqueFileName)
-                .build();
+            PutObjectRequest putObjectRequest =
+                PutObjectRequest.builder().bucket(bucketName).key(uniqueFileName).build();
 
-            try (InputStream inputStream = file.getInputStream())
-            {
+            try (InputStream inputStream = file.getInputStream()) {
               log.debug("Starting upload to S3 for file: {}", originalFilename);
               s3Client.putObject(putObjectRequest,
                   RequestBody.fromInputStream(inputStream, file.getSize()));
@@ -73,64 +65,52 @@ public class UploadService
             log.info("File uploaded successfully. File URL: {}", fileUrl);
 
             return fileUrl;
-          } catch (Exception e)
-          {
+          } catch (Exception e) {
             log.error("Error while uploading file: {}", originalFilename, e);
             throw new RuntimeException("Error while uploading file: " + originalFilename, e);
           }
-        }))
-        .toList();
+        })).toList();
 
     log.info("Waiting for all uploads to complete...");
     CompletableFuture.allOf(uploadFutures.toArray(new CompletableFuture[0])).join();
     log.info("All file uploads completed successfully.");
 
-    List<String> fileUrls = uploadFutures.stream()
-        .map(CompletableFuture::join)
-        .collect(Collectors.toList());
+    List<String> fileUrls =
+        uploadFutures.stream().map(CompletableFuture::join).collect(Collectors.toList());
 
     log.info("Returning file URLs: {}", fileUrls);
     return fileUrls;
   }
 
-  private void validateFiles(MultipartFile[] files) throws FileValidationException
-  {
-    if (files.length > 3)
-    {
+  private void validateFiles(MultipartFile[] files) throws FileValidationException {
+    if (files.length > 3) {
       throw new FileValidationException("Maximum amount of files exceeded");
     }
 
-    for (MultipartFile file : files)
-    {
+    for (MultipartFile file : files) {
       String originalFileName = file.getOriginalFilename();
       long maxFileSize = 5 * 1024 * 1024; // 5 MB
 
-      try
-      {
+      try {
         BufferedImage image = ImageIO.read(file.getInputStream());
-        if (image == null)
-        {
+        if (image == null) {
           throw new FileValidationException("Invalid image file");
         }
-      } catch (IOException e)
-      {
+      } catch (IOException e) {
         throw new FileValidationException("Error reading the image file");
       }
 
-      if (originalFileName == null || originalFileName.isEmpty())
-      {
+      if (originalFileName == null || originalFileName.isEmpty()) {
         throw new FileValidationException("File name should be valid");
       }
 
       String fileExtension =
           originalFileName.substring(originalFileName.lastIndexOf('.') + 1).toLowerCase();
-      if (!ALLOWED_EXTENSIONS.contains(fileExtension))
-      {
+      if (!ALLOWED_EXTENSIONS.contains(fileExtension)) {
         throw new FileValidationException("Only JPG and JPEG formats are allowed");
       }
 
-      if (file.getSize() > maxFileSize)
-      {
+      if (file.getSize() > maxFileSize) {
         throw new FileValidationException("File size exceeds the maximum allowed size of 5 MB");
       }
     }

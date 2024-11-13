@@ -9,8 +9,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
 @Configuration
-public class S3Config
-{
+public class S3Config {
 
   @Value("${aws.s3.access-key}")
   private String accessKey;
@@ -25,15 +24,11 @@ public class S3Config
   private String endpoint;
 
   @Bean
-  public S3Client s3Client()
-  {
+  public S3Client s3Client() {
     AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
 
-    return S3Client.builder()
-        .region(Region.of(region))
-        .credentialsProvider(() -> credentials)
+    return S3Client.builder().region(Region.of(region)).credentialsProvider(() -> credentials)
         .endpointOverride(URI.create(endpoint))
-        .serviceConfiguration(s3Config -> s3Config.pathStyleAccessEnabled(true))
-        .build();
+        .serviceConfiguration(s3Config -> s3Config.pathStyleAccessEnabled(true)).build();
   }
 }

@@ -6,8 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public interface RegisterMapper
-{
+public interface RegisterMapper {
   RegisterMapper INSTANCE = Mappers.getMapper(RegisterMapper.class);
 
   User toEntity(RegisterRequestDto registerRequest);

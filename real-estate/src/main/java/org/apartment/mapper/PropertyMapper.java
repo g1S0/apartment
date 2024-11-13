@@ -7,8 +7,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
-public interface PropertyMapper
-{
+public interface PropertyMapper {
   PropertyMapper INSTANCE = Mappers.getMapper(PropertyMapper.class);
 
   @Mapping(target = "postedBy", source = "postedBy")

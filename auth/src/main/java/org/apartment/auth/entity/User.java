@@ -18,8 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(name = "app_user")
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements UserDetails
-{
+public class User implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
@@ -30,44 +29,37 @@ public class User implements UserDetails
   private String password;
 
   @Override
-  public Collection<? extends GrantedAuthority> getAuthorities()
-  {
+  public Collection<? extends GrantedAuthority> getAuthorities() {
     return null;
   }
 
   @Override
-  public String getUsername()
-  {
+  public String getUsername() {
     return email;
   }
 
   @Override
-  public String getPassword()
-  {
+  public String getPassword() {
     return password;
   }
 
   @Override
-  public boolean isAccountNonExpired()
-  {
+  public boolean isAccountNonExpired() {
     return true;
   }
 
   @Override
-  public boolean isAccountNonLocked()
-  {
+  public boolean isAccountNonLocked() {
     return true;
   }
 
   @Override
-  public boolean isCredentialsNonExpired()
-  {
+  public boolean isCredentialsNonExpired() {
     return true;
   }
 
   @Override
-  public boolean isEnabled()
-  {
+  public boolean isEnabled() {
     return true;
   }
 }

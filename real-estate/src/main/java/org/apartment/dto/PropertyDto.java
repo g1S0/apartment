@@ -21,8 +21,7 @@ import org.apartment.entity.PropertyType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PropertyDto
-{
+public class PropertyDto {
   @NotBlank(message = "Title is required")
   private String title;
 

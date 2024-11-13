@@ -21,8 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PropertyImage
-{
+public class PropertyImage {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

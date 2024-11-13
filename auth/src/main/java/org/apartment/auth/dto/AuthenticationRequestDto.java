@@ -13,18 +13,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationRequestDto
-{
+public class AuthenticationRequestDto {
   @Email(message = "Email should be valid")
   @NotBlank(message = "Email is required")
   private String email;
 
   @NotBlank(message = "Password is required")
   @Size(min = 8, message = "Password must be at least 8 characters long")
-  @Pattern(
-      regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",
-      message = "Password must contain at least one digit, one lowercase letter, one uppercase letter, one special character and no spaces"
-  )
+  @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = "Password must contain at least one digit, one lowercase letter, one uppercase letter, one special character and no spaces")
   private String password;
 }
 

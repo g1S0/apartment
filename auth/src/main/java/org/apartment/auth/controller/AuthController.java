@@ -18,21 +18,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @Slf4j
-public class AuthController
-{
+public class AuthController {
 
   private final AuthService service;
 
-  public AuthController(AuthService service)
-  {
+  public AuthController(AuthService service) {
     this.service = service;
   }
 
   @PostMapping("/register")
   public ResponseEntity<AuthenticationResponseDto> addNewUser(
-      @RequestBody @Valid RegisterRequestDto registerRequest
-  )
-  {
+      @RequestBody @Valid RegisterRequestDto registerRequest) {
     User user = RegisterMapper.INSTANCE.toEntity(registerRequest);
 
     return ResponseEntity.ok(service.register(user));
@@ -40,17 +36,12 @@ public class AuthController
 
   @PostMapping("/authenticate")
   public ResponseEntity<AuthenticationResponseDto> authenticate(
-      @RequestBody @Valid AuthenticationRequestDto request
-  )
-  {
+      @RequestBody @Valid AuthenticationRequestDto request) {
     return ResponseEntity.ok(service.authenticate(request));
   }
 
   @PostMapping("/refresh-token")
-  public ResponseEntity<AuthenticationResponseDto> refreshToken(
-      HttpServletRequest request
-  )
-  {
+  public ResponseEntity<AuthenticationResponseDto> refreshToken(HttpServletRequest request) {
     AuthenticationResponseDto authResponse = service.refreshToken(request);
 
     return ResponseEntity.ok(authResponse);

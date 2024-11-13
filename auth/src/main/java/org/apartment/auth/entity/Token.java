@@ -17,9 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Token
-{
-
+public class Token {
   @Id
   @GeneratedValue
   public Integer id;

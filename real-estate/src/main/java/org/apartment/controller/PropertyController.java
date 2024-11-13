@@ -19,28 +19,23 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/v1/property")
 @AllArgsConstructor
-public class PropertyController
-{
+public class PropertyController {
   private PropertyService propertyService;
 
   @PostMapping
   public ResponseEntity<Property> createProperty(
       @RequestPart("data") @Valid PropertyDto propertyDto,
-      @RequestParam("image") MultipartFile[] imageFiles
-  ) throws Exception
-  {
+      @RequestParam("image") MultipartFile[] imageFiles) throws Exception {
     Property property = PropertyMapper.INSTANCE.toEntity(propertyDto);
     Property createdProperty = propertyService.createProperty(property, imageFiles);
     return ResponseEntity.ok(createdProperty);
   }
 
   @GetMapping
-  public ResponseEntity<List<PropertyDto>> getAllProperties()
-  {
+  public ResponseEntity<List<PropertyDto>> getAllProperties() {
     List<Property> properties = propertyService.getAllProperties();
-    List<PropertyDto> propertyDtos = properties.stream()
-        .map(PropertyMapper.INSTANCE::toDto)
-        .toList();
+    List<PropertyDto> propertyDtos =
+        properties.stream().map(PropertyMapper.INSTANCE::toDto).toList();
     return ResponseEntity.ok(propertyDtos);
   }
 }

@@ -15,21 +15,15 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class LogoutService implements LogoutHandler
-{
+public class LogoutService implements LogoutHandler {
 
   private final TokenRepository tokenRepository;
 
   @Override
-  public void logout(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      Authentication authentication
-  )
-  {
+  public void logout(HttpServletRequest request, HttpServletResponse response,
+                     Authentication authentication) {
     final String authHeader = request.getHeader("Authorization");
-    if (authHeader == null || !authHeader.startsWith("Bearer "))
-    {
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
       log.warn("Missing or invalid Authorization header in logout request");
       throw new InvalidAuthorizationHeaderException("Authorization header is missing or invalid");
     }
@@ -38,15 +32,13 @@ public class LogoutService implements LogoutHandler
     log.debug("Processing logout for token: {}", jwt);
 
     var storedToken = tokenRepository.findTokenByValue(jwt).orElse(null);
-    if (storedToken != null)
-    {
+    if (storedToken != null) {
       log.debug("Revoking and expiring token: {}", jwt);
       storedToken.setRevoked(true);
       tokenRepository.save(storedToken);
       SecurityContextHolder.clearContext();
       log.info("Successfully logged out user with token: {}", jwt);
-    } else
-    {
+    } else {
       log.warn("Token not found: {}", jwt);
     }
   }

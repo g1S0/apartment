@@ -25,55 +25,41 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
-public class SecurityConfiguration
-{
+public class SecurityConfiguration {
 
   private final JwtAuthenticationFilter jwtAuthFilter;
   private final LogoutHandler logoutHandler;
   private final UserRepository userRepository;
 
   public SecurityConfiguration(JwtAuthenticationFilter jwtAuthFilter, LogoutHandler logoutHandler,
-                               UserRepository userRepository)
-  {
+                               UserRepository userRepository) {
     this.jwtAuthFilter = jwtAuthFilter;
     this.logoutHandler = logoutHandler;
     this.userRepository = userRepository;
   }
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
-  {
-    http
-        .csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(req ->
-            req.requestMatchers("/api/v1/auth/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-        )
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(
+            req -> req.requestMatchers("/api/v1/auth/**").permitAll().anyRequest().authenticated())
         .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
         .authenticationProvider(authenticationProvider())
-        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-        .logout(logout ->
-            logout.logoutUrl("/api/v1/auth/logout")
-                .addLogoutHandler(logoutHandler)
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).logout(
+            logout -> logout.logoutUrl("/api/v1/auth/logout").addLogoutHandler(logoutHandler)
                 .logoutSuccessHandler(
-                    (request, response, authentication) -> SecurityContextHolder.clearContext())
-        );
+                    (request, response, authentication) -> SecurityContextHolder.clearContext()));
 
     return http.build();
   }
 
   @Bean
-  public UserDetailsService userDetailsService()
-  {
+  public UserDetailsService userDetailsService() {
     return username -> userRepository.findByEmail(username)
         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
   }
 
   @Bean
-  public AuthenticationProvider authenticationProvider()
-  {
+  public AuthenticationProvider authenticationProvider() {
     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
     authProvider.setUserDetailsService(userDetailsService());
     authProvider.setPasswordEncoder(passwordEncoder());
@@ -82,14 +68,12 @@ public class SecurityConfiguration
 
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-      throws Exception
-  {
+      throws Exception {
     return config.getAuthenticationManager();
   }
 
   @Bean
-  public PasswordEncoder passwordEncoder()
-  {
+  public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 }

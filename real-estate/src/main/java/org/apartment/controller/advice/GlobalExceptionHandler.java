@@ -14,13 +14,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class GlobalExceptionHandler
-{
+public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<ResponseDto<Map<String, String>>> handleValidationExceptions(
-      MethodArgumentNotValidException ex)
-  {
+      MethodArgumentNotValidException ex) {
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getAllErrors().forEach((error) -> {
       String fieldName = ((FieldError) error).getField();
@@ -34,24 +32,21 @@ public class GlobalExceptionHandler
   @ExceptionHandler(ConstraintViolationException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<ResponseDto<String>> handleConstraintViolationException(
-      ConstraintViolationException ex)
-  {
+      ConstraintViolationException ex) {
     ResponseDto<String> response = new ResponseDto<>("Constraint violation: " + ex.getMessage());
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public ResponseEntity<ResponseDto<String>> handleGenericException(Exception e)
-  {
+  public ResponseEntity<ResponseDto<String>> handleGenericException(Exception e) {
     ResponseDto<String> response =
         new ResponseDto<>("An unexpected error occurred: " + e.getMessage());
     return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   @ExceptionHandler(FileValidationException.class)
-  public ResponseEntity<String> handleFileValidationException(FileValidationException ex)
-  {
+  public ResponseEntity<String> handleFileValidationException(FileValidationException ex) {
     return ResponseEntity.badRequest().body(ex.getMessage());
   }
 }

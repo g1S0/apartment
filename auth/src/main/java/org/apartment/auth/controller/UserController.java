@@ -11,22 +11,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/users")
-public class UserController
-{
+public class UserController {
 
   private final UserService service;
 
-  public UserController(UserService service)
-  {
+  public UserController(UserService service) {
     this.service = service;
   }
 
   @PutMapping
-  public ResponseEntity<Void> changePassword(
-      @RequestBody ChangePasswordRequestDto request,
-      Principal connectedUser
-  )
-  {
+  public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequestDto request,
+                                             Principal connectedUser) {
     service.changePassword(request, connectedUser);
     return ResponseEntity.ok().build();
   }
