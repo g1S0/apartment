@@ -1,6 +1,7 @@
 package org.apartment.auth.service;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apartment.auth.dto.AuthenticationRequestDto;
 import org.apartment.auth.dto.AuthenticationResponseDto;
@@ -26,6 +27,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    @Transactional
     public AuthenticationResponseDto register(User user) {
         log.debug("Registering user with email: {}", user.getEmail());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -41,6 +43,7 @@ public class AuthService {
                 .build();
     }
 
+    @Transactional
     public AuthenticationResponseDto authenticate(AuthenticationRequestDto request) {
         log.debug("Authenticating user with email: {}", request.getEmail());
         authenticationManager.authenticate(
