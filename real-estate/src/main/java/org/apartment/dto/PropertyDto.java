@@ -1,6 +1,13 @@
 package org.apartment.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,41 +16,38 @@ import org.apartment.entity.PropertyImage;
 import org.apartment.entity.PropertyStatus;
 import org.apartment.entity.PropertyType;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PropertyDto {
-    @NotBlank(message = "Title is required")
-    private String title;
+public class PropertyDto
+{
+  @NotBlank(message = "Title is required")
+  private String title;
 
-    @Size(max = 2000, message = "Description should not exceed 2000 characters")
-    private String description;
+  @Size(max = 2000, message = "Description should not exceed 2000 characters")
+  private String description;
 
-    @NotNull(message = "Type is required")
-    private PropertyType type;
+  @NotNull(message = "Type is required")
+  private PropertyType type;
 
-    @NotNull(message = "Price is required")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than zero")
-    @DecimalMax(value = "1000000000.0", message = "Price must not exceed 1 billion")
-    private BigDecimal price;
+  @NotNull(message = "Price is required")
+  @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than zero")
+  @DecimalMax(value = "1000000000.0", message = "Price must not exceed 1 billion")
+  private BigDecimal price;
 
-    @NotBlank(message = "City is required")
-    private String city;
+  @NotBlank(message = "City is required")
+  private String city;
 
-    @NotNull(message = "Status is required")
-    private PropertyStatus status;
+  @NotNull(message = "Status is required")
+  private PropertyStatus status;
 
-    @NotNull(message = "Posted by is required")
-    private Long postedBy;
+  @NotNull(message = "Posted by is required")
+  private Long postedBy;
 
-    private List<PropertyImage> images;
+  private List<PropertyImage> images;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
 }

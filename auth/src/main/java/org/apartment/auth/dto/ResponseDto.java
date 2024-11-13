@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseDto<T> {
-    private T data;
+public class ResponseDto<T>
+{
+  private T data;
 }
