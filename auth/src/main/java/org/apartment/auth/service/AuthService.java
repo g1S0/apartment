@@ -81,9 +81,7 @@ public class AuthService {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validUserTokens.isEmpty())
             return;
-        validUserTokens.forEach(token -> {
-            token.setRevoked(true);
-        });
+        validUserTokens.forEach(token -> token.setRevoked(true));
         tokenRepository.saveAll(validUserTokens);
     }
 
