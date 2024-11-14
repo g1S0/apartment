@@ -21,22 +21,29 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 
 @Data
-@Table(name = "property")
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
+@Table(name = "property")
+@Indexed
 public class Property {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(nullable = false)
+  @GenericField
   private String title;
 
   @Column(length = 2000)
+  @FullTextField
   private String description;
 
   @Enumerated(EnumType.STRING)
@@ -44,9 +51,11 @@ public class Property {
   private PropertyType type;
 
   @Column(nullable = false)
+  @GenericField
   private BigDecimal price;
 
   @Column(nullable = false)
+  @GenericField
   private String city;
 
   @Enumerated(EnumType.STRING)
@@ -57,6 +66,7 @@ public class Property {
   private Long postedBy;
 
   @Column(name = "created_at", updatable = false)
+  @GenericField
   private LocalDateTime createdAt;
 
   @Column(name = "updated_at")
