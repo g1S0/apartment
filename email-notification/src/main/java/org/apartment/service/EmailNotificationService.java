@@ -3,6 +3,7 @@ package org.apartment.service;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class EmailNotificationService {
     this.mailSender = mailSender;
   }
 
+  @KafkaListener(topics = "email_topic", groupId = "email_group")
   public void sendRegistrationSuccessEmail(String toEmail) {
     MimeMessage message = mailSender.createMimeMessage();
 
@@ -29,10 +31,9 @@ public class EmailNotificationService {
       helper.setTo(toEmail);
       helper.setSubject("TApartment");
 
-      String htmlMsg = "<div style='text-align: center;'>"
-          + "<h2>Congratulations!</h2>"
-          + "<p>Your registration was successful.</p>"
-          + "</div>";
+      String htmlMsg = "<div style='text-align: center;'>" + "<h2>Congratulations!</h2>"
+          +
+          "<p>Your registration was successful.</p>" + "</div>";
 
       helper.setText(htmlMsg, true);
 
