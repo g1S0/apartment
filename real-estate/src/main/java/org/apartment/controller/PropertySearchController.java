@@ -2,12 +2,12 @@ package org.apartment.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.apartment.dto.PropertyDto;
 import org.apartment.entity.Property;
+import org.apartment.entity.PropertyType;
 import org.apartment.mapper.PropertyMapper;
 import org.apartment.service.PropertySearchService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,9 +32,10 @@ public class PropertySearchController {
       @RequestParam(name = "startDate", required = false)
       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
       @RequestParam(name = "endDate", required = false)
-      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate) {
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate,
+      @RequestParam(name = "propertyType", required = false) PropertyType propertyType) {
     List<Property> properties =
-        propertySearchService.searchProperties(keyword, minPrice, maxPrice, startDate, endDate);
+        propertySearchService.searchProperties(keyword, minPrice, maxPrice, startDate, endDate, propertyType);
     List<PropertyDto> propertyDtoList =
         properties.stream().map(PropertyMapper.INSTANCE::toDto).collect(Collectors.toList());
     return ResponseEntity.ok(propertyDtoList);
