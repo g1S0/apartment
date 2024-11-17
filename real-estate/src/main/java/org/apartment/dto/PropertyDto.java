@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +47,6 @@ public class PropertyDto {
 
   private List<PropertyImage> images;
 
-  private LocalDateTime createdAt;
-  private LocalDateTime updatedAt;
+  private LocalDate createdAt;
+  private LocalDate updatedAt;
 }
