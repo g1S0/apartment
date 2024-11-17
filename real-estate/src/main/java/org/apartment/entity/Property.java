@@ -39,7 +39,7 @@ public class Property {
   private Long id;
 
   @Column(nullable = false)
-  @GenericField
+  @FullTextField
   private String title;
 
   @Column(length = 2000)
@@ -48,6 +48,7 @@ public class Property {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
+  @GenericField
   private PropertyType type;
 
   @Column(nullable = false)
