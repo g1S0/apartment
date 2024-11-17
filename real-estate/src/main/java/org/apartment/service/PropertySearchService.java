@@ -2,7 +2,7 @@ package org.apartment.service;
 
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apartment.entity.Property;
@@ -21,14 +21,14 @@ public class PropertySearchService {
   }
 
   public List<Property> searchProperties(String keyword, BigDecimal minPrice, BigDecimal maxPrice,
-                                         LocalDateTime startDate, LocalDateTime endDate) {
+                                         LocalDate startDate, LocalDate endDate) {
 
     final String effectiveKeyword = (keyword != null) ? keyword : "";
     final BigDecimal effectiveMinPrice = (minPrice != null) ? minPrice : BigDecimal.ZERO;
     final BigDecimal effectiveMaxPrice =
         (maxPrice != null) ? maxPrice : new BigDecimal("1000000000.0");
-    final LocalDateTime effectiveStartDate = (startDate != null) ? startDate : LocalDateTime.MIN;
-    final LocalDateTime effectiveEndDate = (endDate != null) ? endDate : LocalDateTime.MAX;
+    final LocalDate effectiveStartDate = (startDate != null) ? startDate : LocalDate.MIN;
+    final LocalDate effectiveEndDate = (endDate != null) ? endDate : LocalDate.MAX;
 
     log.info("Starting search for properties with keyword: {}, price range: {} - {}, "
             + "date range: {} - {}", effectiveKeyword, effectiveMinPrice, effectiveMaxPrice,

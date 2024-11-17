@@ -1,6 +1,7 @@
 package org.apartment.controller;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,9 +30,9 @@ public class PropertySearchController {
       @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
       @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice,
       @RequestParam(name = "startDate", required = false)
-      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
       @RequestParam(name = "endDate", required = false)
-      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate) {
     List<Property> properties =
         propertySearchService.searchProperties(keyword, minPrice, maxPrice, startDate, endDate);
     List<PropertyDto> propertyDtoList =
