@@ -25,7 +25,6 @@ public class PropertySearchService {
   public List<Property> searchProperties(String keyword, BigDecimal minPrice, BigDecimal maxPrice,
                                          LocalDate startDate, LocalDate endDate,
                                          PropertyType propertyType) {
-
     final String effectiveKeyword = (keyword != null) ? keyword : "";
     final BigDecimal effectiveMinPrice = (minPrice != null) ? minPrice : BigDecimal.ZERO;
     final BigDecimal effectiveMaxPrice =
@@ -40,10 +39,13 @@ public class PropertySearchService {
     SearchSession searchSession = Search.session(entityManager);
 
     return searchSession.search(Property.class).where(f -> {
-      BooleanPredicateClausesStep<?> query =
-          f.bool().must(f.match().fields("title", "description", "city").matching(effectiveKeyword))
-              .must(f.range().field("price").between(effectiveMinPrice, effectiveMaxPrice))
-              .must(f.range().field("createdAt").between(effectiveStartDate, effectiveEndDate));
+      BooleanPredicateClausesStep<?> query = f.bool()
+          .must(f.range().field("price").between(effectiveMinPrice, effectiveMaxPrice))
+          .must(f.range().field("createdAt").between(effectiveStartDate, effectiveEndDate));
+
+      if (!effectiveKeyword.isBlank()) {
+        query.must(f.match().fields("title", "description", "city").matching(effectiveKeyword));
+      }
 
       if (propertyType != null) {
         query.must(f.match().field("type").matching(propertyType));
