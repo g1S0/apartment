@@ -36,7 +36,7 @@ public class UploadService {
     this.bucketName = bucketName;
   }
 
-  public List<String> uploadFiles(MultipartFile[] files) throws Exception {
+  public List<String> uploadFiles(MultipartFile[] files) {
     log.info("Starting file upload. Total files to upload: {}", files.length);
 
     validateFiles(files);
