@@ -1,13 +1,11 @@
-package org.apartment.auth;
+package org.apartment;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.kafka.annotation.EnableKafka;
 
 @SpringBootApplication
-@EnableKafka
-public class AuthApplication {
+public class EmailNotificationApplication {
   public static void main(String[] args) {
-    SpringApplication.run(AuthApplication.class, args);
+    SpringApplication.run(EmailNotificationApplication.class, args);
   }
 }

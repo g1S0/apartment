@@ -11,6 +11,7 @@ import org.apartment.auth.entity.User;
 import org.apartment.auth.repository.TokenRepository;
 import org.apartment.auth.repository.UserRepository;
 import org.springframework.http.HttpHeaders;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,14 +27,18 @@ public class AuthService {
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
 
+  private final KafkaTemplate<String, String> kafkaTemplate;
+
   @Transactional
-  public AuthenticationResponseDto register(User user) {
+  public AuthenticationResponseDto register(User user) throws Exception {
     log.debug("Registering user with email: {}", user.getEmail());
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     var savedUser = userRepository.save(user);
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
     saveUserToken(savedUser, jwtToken);
+
+    kafkaTemplate.send("email_topic", savedUser.getEmail());
 
     log.info("User registered successfully: {}", user.getEmail());
     return AuthenticationResponseDto.builder().accessToken(jwtToken).refreshToken(refreshToken)

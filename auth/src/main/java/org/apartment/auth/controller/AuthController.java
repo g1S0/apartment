@@ -28,7 +28,7 @@ public class AuthController {
 
   @PostMapping("/register")
   public ResponseEntity<AuthenticationResponseDto> addNewUser(
-      @RequestBody @Valid RegisterRequestDto registerRequest) {
+      @RequestBody @Valid RegisterRequestDto registerRequest) throws Exception {
     User user = RegisterMapper.INSTANCE.toEntity(registerRequest);
 
     return ResponseEntity.ok(service.register(user));
