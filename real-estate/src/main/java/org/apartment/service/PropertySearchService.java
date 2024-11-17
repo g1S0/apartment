@@ -1,12 +1,10 @@
 package org.apartment.service;
 
 import jakarta.persistence.EntityManager;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.apartment.dto.PropertySearchDto;
 import org.apartment.entity.Property;
-import org.apartment.entity.PropertyType;
 import org.hibernate.search.engine.search.predicate.dsl.BooleanPredicateClausesStep;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.session.SearchSession;
@@ -22,44 +20,36 @@ public class PropertySearchService {
     this.entityManager = entityManager;
   }
 
-  public List<Property> searchProperties(String keyword, String city, String status,
-                                         BigDecimal minPrice, BigDecimal maxPrice,
-                                         LocalDate startDate, LocalDate endDate,
-                                         PropertyType propertyType) {
-    final String effectiveKeyword = (keyword != null) ? keyword : "";
-    final String effectiveCity = (city != null) ? city : "";
-    final String effectiveStatus = (status != null) ? status : "";
-    final BigDecimal effectiveMinPrice = (minPrice != null) ? minPrice : BigDecimal.ZERO;
-    final BigDecimal effectiveMaxPrice =
-        (maxPrice != null) ? maxPrice : new BigDecimal("1000000000.0");
-    final LocalDate effectiveStartDate = (startDate != null) ? startDate : LocalDate.MIN;
-    final LocalDate effectiveEndDate = (endDate != null) ? endDate : LocalDate.MAX;
-
+  public List<Property> searchProperties(PropertySearchDto propertySearchDto) {
     log.info("Starting search for properties with keyword: {}, price range: {} - {}, "
-            + "date range: {} - {}, property type: {}, city: {}", effectiveKeyword, effectiveMinPrice,
-        effectiveMaxPrice, effectiveStartDate, effectiveEndDate, propertyType, city);
+            + "date range: {} - {}, property type: {}, city: {}", propertySearchDto.getKeyword(),
+        propertySearchDto.getMinPrice(), propertySearchDto.getMaxPrice(),
+        propertySearchDto.getStartDate(), propertySearchDto.getEndDate(),
+        propertySearchDto.getPropertyType(), propertySearchDto.getCity());
 
     SearchSession searchSession = Search.session(entityManager);
 
     return searchSession.search(Property.class).where(f -> {
-      BooleanPredicateClausesStep<?> query =
-          f.bool().must(f.range().field("price").between(effectiveMinPrice, effectiveMaxPrice))
-              .must(f.range().field("createdAt").between(effectiveStartDate, effectiveEndDate));
+      BooleanPredicateClausesStep<?> query = f.bool().must(f.range().field("price")
+          .between(propertySearchDto.getMinPrice(), propertySearchDto.getMaxPrice())).must(
+          f.range().field("createdAt")
+              .between(propertySearchDto.getStartDate(), propertySearchDto.getEndDate()));
 
-      if (!effectiveKeyword.isBlank()) {
-        query.must(f.match().fields("title", "description").matching(effectiveKeyword));
+      if (!propertySearchDto.getKeyword().isEmpty()) {
+        query.must(
+            f.match().fields("title", "description").matching(propertySearchDto.getKeyword()));
       }
 
-      if (!effectiveCity.isBlank()) {
-        query.must(f.match().fields("city").matching(effectiveCity));
+      if (!propertySearchDto.getCity().isEmpty()) {
+        query.must(f.match().fields("city").matching(propertySearchDto.getCity()));
       }
 
-      if (!effectiveStatus.isBlank()) {
-        query.must(f.match().fields("status").matching(effectiveStatus));
+      if (!propertySearchDto.getStatus().isEmpty()) {
+        query.must(f.match().fields("status").matching(propertySearchDto.getStatus()));
       }
 
-      if (propertyType != null) {
-        query.must(f.match().field("type").matching(propertyType));
+      if (propertySearchDto.getPropertyType() != null) {
+        query.must(f.match().field("type").matching(propertySearchDto.getPropertyType()));
       }
 
       return query;
