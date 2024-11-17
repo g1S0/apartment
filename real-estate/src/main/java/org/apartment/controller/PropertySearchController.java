@@ -34,8 +34,8 @@ public class PropertySearchController {
       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
     List<Property> properties =
         propertySearchService.searchProperties(keyword, minPrice, maxPrice, startDate, endDate);
-    List<PropertyDto> propertyDtos =
+    List<PropertyDto> propertyDtoList =
         properties.stream().map(PropertyMapper.INSTANCE::toDto).collect(Collectors.toList());
-    return ResponseEntity.ok(propertyDtos);
+    return ResponseEntity.ok(propertyDtoList);
   }
 }
