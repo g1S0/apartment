@@ -22,20 +22,22 @@ public class PropertySearchService {
     this.entityManager = entityManager;
   }
 
-  public List<Property> searchProperties(String keyword, String city, BigDecimal minPrice,
-                                         BigDecimal maxPrice, LocalDate startDate,
-                                         LocalDate endDate, PropertyType propertyType) {
+  public List<Property> searchProperties(String keyword, String city, String status,
+                                         BigDecimal minPrice, BigDecimal maxPrice,
+                                         LocalDate startDate, LocalDate endDate,
+                                         PropertyType propertyType) {
     final String effectiveKeyword = (keyword != null) ? keyword : "";
     final String effectiveCity = (city != null) ? city : "";
+    final String effectiveStatus = (status != null) ? status : "";
     final BigDecimal effectiveMinPrice = (minPrice != null) ? minPrice : BigDecimal.ZERO;
     final BigDecimal effectiveMaxPrice =
         (maxPrice != null) ? maxPrice : new BigDecimal("1000000000.0");
     final LocalDate effectiveStartDate = (startDate != null) ? startDate : LocalDate.MIN;
     final LocalDate effectiveEndDate = (endDate != null) ? endDate : LocalDate.MAX;
 
-    log.info("Starting search for properties with keyword: {}, price range: {} - {}, " +
-            "date range: {} - {}, property type: {}", effectiveKeyword, effectiveMinPrice,
-        effectiveMaxPrice, effectiveStartDate, effectiveEndDate, propertyType);
+    log.info("Starting search for properties with keyword: {}, price range: {} - {}, "
+            + "date range: {} - {}, property type: {}, city: {}", effectiveKeyword, effectiveMinPrice,
+        effectiveMaxPrice, effectiveStartDate, effectiveEndDate, propertyType, city);
 
     SearchSession searchSession = Search.session(entityManager);
 
@@ -49,7 +51,11 @@ public class PropertySearchService {
       }
 
       if (!effectiveCity.isBlank()) {
-        query.must(f.match().fields("city").matching(effectiveKeyword));
+        query.must(f.match().fields("city").matching(effectiveCity));
+      }
+
+      if (!effectiveStatus.isBlank()) {
+        query.must(f.match().fields("status").matching(effectiveStatus));
       }
 
       if (propertyType != null) {

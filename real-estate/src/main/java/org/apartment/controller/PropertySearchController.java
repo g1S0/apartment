@@ -28,6 +28,7 @@ public class PropertySearchController {
   public ResponseEntity<List<PropertyDto>> searchProperties(
       @RequestParam(name = "keyword", required = false) String keyword,
       @RequestParam(name = "city", required = false) String city,
+      @RequestParam(name = "status", required = false) String status,
       @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
       @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice,
       @RequestParam(name = "startDate", required = false)
@@ -36,7 +37,7 @@ public class PropertySearchController {
       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate,
       @RequestParam(name = "propertyType", required = false) PropertyType propertyType) {
     List<Property> properties =
-        propertySearchService.searchProperties(keyword, city, minPrice, maxPrice, startDate, endDate, propertyType);
+        propertySearchService.searchProperties(keyword, city, status, minPrice, maxPrice, startDate, endDate, propertyType);
     List<PropertyDto> propertyDtoList =
         properties.stream().map(PropertyMapper.INSTANCE::toDto).collect(Collectors.toList());
     return ResponseEntity.ok(propertyDtoList);

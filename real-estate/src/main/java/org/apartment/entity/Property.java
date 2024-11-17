@@ -61,6 +61,7 @@ public class Property {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
+  @GenericField
   private PropertyStatus status;
 
   @Column(name = "posted_by", nullable = false)
