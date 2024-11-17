@@ -1,17 +1,12 @@
 package org.apartment.service;
 
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apartment.entity.Property;
 import org.apartment.entity.PropertyImage;
 import org.apartment.repository.PropertyRepository;
-import org.hibernate.search.mapper.orm.Search;
-import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,13 +16,10 @@ public class PropertyService {
 
   private final PropertyRepository propertyRepository;
   private final UploadService uploadService;
-  private final EntityManager entityManager;
 
-  public PropertyService(PropertyRepository propertyRepository, UploadService uploadService,
-                         EntityManager entityManager) {
+  public PropertyService(PropertyRepository propertyRepository, UploadService uploadService) {
     this.propertyRepository = propertyRepository;
     this.uploadService = uploadService;
-    this.entityManager = entityManager;
   }
 
   @Transactional
@@ -61,15 +53,5 @@ public class PropertyService {
 
   public List<Property> getAllProperties() {
     return propertyRepository.findAll();
-  }
-
-  public List<Property> searchProperties(String keyword, BigDecimal minPrice, BigDecimal maxPrice,
-                                         LocalDateTime startDate, LocalDateTime endDate) {
-    SearchSession searchSession = Search.session(entityManager);
-
-    return searchSession.search(Property.class).where(
-        f -> f.bool().must(f.match().fields("title", "description", "city").matching(keyword))
-            .must(f.range().field("price").between(minPrice, maxPrice))
-            .must(f.range().field("createdAt").between(startDate, endDate))).fetchHits(100);
   }
 }

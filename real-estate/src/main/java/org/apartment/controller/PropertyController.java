@@ -1,15 +1,12 @@
 package org.apartment.controller;
 
 import jakarta.validation.Valid;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.apartment.dto.PropertyDto;
 import org.apartment.entity.Property;
 import org.apartment.mapper.PropertyMapper;
 import org.apartment.service.PropertyService;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,17 +37,5 @@ public class PropertyController {
     List<PropertyDto> propertyDtos =
         properties.stream().map(PropertyMapper.INSTANCE::toDto).toList();
     return ResponseEntity.ok(propertyDtos);
-  }
-
-  @GetMapping("/search")
-  public List<Property> searchProperties(@RequestParam(required = false) String keyword,
-                                         @RequestParam(required = false) BigDecimal minPrice,
-                                         @RequestParam(required = false) BigDecimal maxPrice,
-                                         @RequestParam(required = false)
-                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                         LocalDateTime startDate, @RequestParam(required = false)
-                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                         LocalDateTime endDate) {
-    return propertyService.searchProperties(keyword, minPrice, maxPrice, startDate, endDate);
   }
 }
