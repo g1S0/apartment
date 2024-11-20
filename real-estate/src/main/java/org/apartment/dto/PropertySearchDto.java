@@ -3,12 +3,16 @@ package org.apartment.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apartment.entity.PropertyType;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class PropertySearchDto {
   private String keyword;
   private String city;
