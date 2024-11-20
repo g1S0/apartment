@@ -56,7 +56,7 @@ public class Property {
   private BigDecimal price;
 
   @Column(nullable = false)
-  @GenericField
+  @FullTextField
   private String city;
 
   @Enumerated(EnumType.STRING)
