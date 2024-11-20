@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apartment.dto.PropertySearchDto;
 import org.apartment.entity.Property;
+import org.apartment.entity.PropertyStatus;
 import org.hibernate.search.engine.search.predicate.dsl.BooleanPredicateClausesStep;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.session.SearchSession;
@@ -21,8 +22,8 @@ public class PropertySearchService {
   }
 
   public List<Property> searchProperties(PropertySearchDto propertySearchDto) {
-    log.info("Starting search for properties with keyword: {}, price range: {} - {}, "
-            + "date range: {} - {}, property type: {}, city: {}", propertySearchDto.getKeyword(),
+    log.info("Starting search for properties with keyword: {}, price range: {} - {}, " +
+            "date range: {} - {}, property type: {}, city: {}", propertySearchDto.getKeyword(),
         propertySearchDto.getMinPrice(), propertySearchDto.getMaxPrice(),
         propertySearchDto.getStartDate(), propertySearchDto.getEndDate(),
         propertySearchDto.getPropertyType(), propertySearchDto.getCity());
@@ -45,7 +46,8 @@ public class PropertySearchService {
       }
 
       if (!propertySearchDto.getStatus().isEmpty()) {
-        query.must(f.match().fields("status").matching(propertySearchDto.getStatus()));
+        query.must(f.match().fields("status")
+            .matching(PropertyStatus.valueOf(propertySearchDto.getStatus().toUpperCase())));
       }
 
       if (propertySearchDto.getPropertyType() != null) {
