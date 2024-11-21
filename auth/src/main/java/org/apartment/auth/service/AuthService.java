@@ -52,13 +52,12 @@ public class AuthService {
     var user = userRepository.findByEmail(request.getEmail())
         .orElseThrow(() -> new RuntimeException("User not found"));
     var jwtToken = jwtService.generateToken(user);
-    var refreshToken = jwtService.generateRefreshToken(user);
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
 
     log.info("User authenticated successfully: {}", request.getEmail());
-    return AuthenticationResponseDto.builder().accessToken(jwtToken).refreshToken(refreshToken)
-        .build();
+    return AuthenticationResponseDto.builder().accessToken(jwtToken)
+        .refreshToken(jwtService.generateRefreshToken(user)).build();
   }
 
   private void saveUserToken(User user, String jwtToken) {
