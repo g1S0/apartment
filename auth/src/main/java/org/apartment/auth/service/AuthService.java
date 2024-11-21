@@ -30,7 +30,7 @@ public class AuthService {
   private final KafkaTemplate<String, String> kafkaTemplate;
 
   @Transactional
-  public AuthenticationResponseDto register(User user) throws Exception {
+  public AuthenticationResponseDto register(User user) {
     log.debug("Registering user with email: {}", user.getEmail());
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     var savedUser = userRepository.save(user);
@@ -64,6 +64,8 @@ public class AuthService {
   private void saveUserToken(User user, String jwtToken) {
     log.debug("Saving token for user: {}", user.getEmail());
     var token = Token.builder().user(user).token(jwtToken).revoked(false).build();
+    System.out.println("TESTING");
+    System.out.println(token);
     tokenRepository.save(token);
   }
 
