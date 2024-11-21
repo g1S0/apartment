@@ -11,6 +11,7 @@ import org.apartment.auth.dto.ResponseDto;
 import org.apartment.auth.exception.InvalidAuthorizationHeaderException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -91,5 +92,10 @@ public class GlobalExceptionHandler {
       UnsupportedJwtException e) {
     ResponseDto<String> response = new ResponseDto<>("Unsupported token");
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(BadCredentialsException.class)
+  public ResponseEntity<String> handleBadCredentialsException(BadCredentialsException ex) {
+    return new ResponseEntity<>("Invalid username or password", HttpStatus.UNAUTHORIZED);
   }
 }
