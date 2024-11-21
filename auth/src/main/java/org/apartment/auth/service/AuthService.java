@@ -35,14 +35,13 @@ public class AuthService {
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     var savedUser = userRepository.save(user);
     var jwtToken = jwtService.generateToken(user);
-    var refreshToken = jwtService.generateRefreshToken(user);
     saveUserToken(savedUser, jwtToken);
 
     kafkaTemplate.send("email_topic", savedUser.getEmail());
 
     log.info("User registered successfully: {}", user.getEmail());
-    return AuthenticationResponseDto.builder().accessToken(jwtToken).refreshToken(refreshToken)
-        .build();
+    return AuthenticationResponseDto.builder().accessToken(jwtToken)
+        .refreshToken(jwtService.generateRefreshToken(user)).build();
   }
 
   @Transactional
