@@ -1,5 +1,6 @@
 package org.apartment.auth.controller;
 
+import jakarta.validation.Valid;
 import java.security.Principal;
 import org.apartment.auth.dto.ChangePasswordRequestDto;
 import org.apartment.auth.service.UserService;
@@ -20,7 +21,7 @@ public class UserController {
   }
 
   @PutMapping
-  public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequestDto request,
+  public ResponseEntity<Void> changePassword(@RequestBody @Valid ChangePasswordRequestDto request,
                                              Principal connectedUser) {
     service.changePassword(request, connectedUser);
     return ResponseEntity.ok().build();
