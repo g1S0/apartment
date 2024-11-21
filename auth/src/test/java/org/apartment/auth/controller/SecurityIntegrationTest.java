@@ -139,11 +139,9 @@ class SecurityIntegrationTest {
 
     String accessToken = registrationResponse.getAccessToken();
 
-    ChangePasswordRequestDto changePasswordRequest = new ChangePasswordRequestDto();
     final String newPassword = "NewPassword@456)";
-    changePasswordRequest.setCurrentPassword(password);
-    changePasswordRequest.setNewPassword(newPassword);
-    changePasswordRequest.setConfirmationPassword(newPassword);
+    ChangePasswordRequestDto changePasswordRequest =
+        new ChangePasswordRequestDto(password, newPassword, newPassword);
 
     String changePasswordJson = objectMapper.writeValueAsString(changePasswordRequest);
 
