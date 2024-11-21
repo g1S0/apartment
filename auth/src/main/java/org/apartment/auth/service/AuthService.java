@@ -30,19 +30,18 @@ public class AuthService {
   private final KafkaTemplate<String, String> kafkaTemplate;
 
   @Transactional
-  public AuthenticationResponseDto register(User user) throws Exception {
+  public AuthenticationResponseDto register(User user) {
     log.debug("Registering user with email: {}", user.getEmail());
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     var savedUser = userRepository.save(user);
     var jwtToken = jwtService.generateToken(user);
-    var refreshToken = jwtService.generateRefreshToken(user);
     saveUserToken(savedUser, jwtToken);
 
     kafkaTemplate.send("email_topic", savedUser.getEmail());
 
     log.info("User registered successfully: {}", user.getEmail());
-    return AuthenticationResponseDto.builder().accessToken(jwtToken).refreshToken(refreshToken)
-        .build();
+    return AuthenticationResponseDto.builder().accessToken(jwtToken)
+        .refreshToken(jwtService.generateRefreshToken(user)).build();
   }
 
   @Transactional
@@ -53,18 +52,19 @@ public class AuthService {
     var user = userRepository.findByEmail(request.getEmail())
         .orElseThrow(() -> new RuntimeException("User not found"));
     var jwtToken = jwtService.generateToken(user);
-    var refreshToken = jwtService.generateRefreshToken(user);
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
 
     log.info("User authenticated successfully: {}", request.getEmail());
-    return AuthenticationResponseDto.builder().accessToken(jwtToken).refreshToken(refreshToken)
-        .build();
+    return AuthenticationResponseDto.builder().accessToken(jwtToken)
+        .refreshToken(jwtService.generateRefreshToken(user)).build();
   }
 
   private void saveUserToken(User user, String jwtToken) {
     log.debug("Saving token for user: {}", user.getEmail());
     var token = Token.builder().user(user).token(jwtToken).revoked(false).build();
+    System.out.println("TESTING");
+    System.out.println(token);
     tokenRepository.save(token);
   }
 

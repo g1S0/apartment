@@ -1,5 +1,64 @@
 databaseChangeLog:
   - changeSet:
       id: 1
-      author: "test"
-      changes: []
+      author: ddasfasdfs
+      changes:
+        - createTable:
+            tableName: app_user
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: first_name
+                  type: varchar(255)
+              - column:
+                  name: second_name
+                  type: varchar(255)
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(255)
+
+  - changeSet:
+      id: 2
+      author: ddasfasdfs
+      changes:
+        - createTable:
+            tableName: token
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: token
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: revoked
+                  type: boolean
+                  defaultValueBoolean: false
+              - column:
+                  name: user_id
+                  type: int
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: token
+            baseColumnNames: user_id
+            constraintName: fk_token_user
+            referencedTableName: app_user
+            referencedColumnNames: id
