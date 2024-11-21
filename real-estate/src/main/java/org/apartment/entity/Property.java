@@ -15,52 +15,64 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 
 @Data
-@Table(name = "property")
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
+@Table(name = "property")
+@Indexed
 public class Property {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(nullable = false)
+  @FullTextField
   private String title;
 
   @Column(length = 2000)
+  @FullTextField
   private String description;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
+  @GenericField
   private PropertyType type;
 
   @Column(nullable = false)
+  @GenericField
   private BigDecimal price;
 
   @Column(nullable = false)
+  @FullTextField
   private String city;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
+  @GenericField
   private PropertyStatus status;
 
   @Column(name = "posted_by", nullable = false)
   private Long postedBy;
 
   @Column(name = "created_at", updatable = false)
-  private LocalDateTime createdAt;
+  @GenericField
+  private LocalDate createdAt;
 
   @Column(name = "updated_at")
-  private LocalDateTime updatedAt;
+  private LocalDate updatedAt;
 
   @JsonManagedReference
   @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -68,12 +80,12 @@ public class Property {
 
   @PrePersist
   protected void onCreate() {
-    createdAt = LocalDateTime.now();
-    updatedAt = LocalDateTime.now();
+    createdAt = LocalDate.now();
+    updatedAt = LocalDate.now();
   }
 
   @PreUpdate
   protected void onUpdate() {
-    updatedAt = LocalDateTime.now();
+    updatedAt = LocalDate.now();
   }
 }

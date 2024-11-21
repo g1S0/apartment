@@ -1,0 +1,18 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: real-estate
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+aws:
+  s3:
+    access-key: mockAccessKey
+    secret-key: mockSecretKey
+    region: us-east-1
+    endpoint: http://localhost:4566
+    bucket-name: test-bucket

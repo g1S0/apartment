@@ -3,7 +3,7 @@ package org.apartment.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import org.apartment.dto.PropertyDto;
 import org.apartment.entity.Property;
 import org.apartment.entity.PropertyStatus;
@@ -17,8 +17,8 @@ public class PropertyMapperTest {
   public void testToDto() {
     Property property = Property.builder().id(1L).title("Apartment").description("Test text")
         .type(PropertyType.APARTMENT).price(BigDecimal.valueOf(1000000)).city("Msk")
-        .status(PropertyStatus.AVAILABLE).postedBy(1L).createdAt(LocalDateTime.now())
-        .updatedAt(LocalDateTime.now()).build();
+        .status(PropertyStatus.AVAILABLE).postedBy(1L).createdAt(LocalDate.now())
+        .updatedAt(LocalDate.now()).build();
 
 
     PropertyDto propertyDto = propertyMapper.toDto(property);
@@ -40,8 +40,8 @@ public class PropertyMapperTest {
   public void testToEntity() {
     PropertyDto propertyDto = PropertyDto.builder().title("Apartment").description("Test text")
         .type(PropertyType.APARTMENT).price(BigDecimal.valueOf(1000000)).city("Msk")
-        .status(PropertyStatus.AVAILABLE).postedBy(1L).createdAt(LocalDateTime.now())
-        .updatedAt(LocalDateTime.now()).build();
+        .status(PropertyStatus.AVAILABLE).postedBy(1L).createdAt(LocalDate.now())
+        .updatedAt(LocalDate.now()).build();
 
     Property property = propertyMapper.toEntity(propertyDto);
 

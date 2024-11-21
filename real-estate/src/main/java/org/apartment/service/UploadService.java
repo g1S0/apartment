@@ -36,7 +36,7 @@ public class UploadService {
     this.bucketName = bucketName;
   }
 
-  public List<String> uploadFiles(MultipartFile[] files) throws Exception {
+  public List<String> uploadFiles(MultipartFile[] files) {
     log.info("Starting file upload. Total files to upload: {}", files.length);
 
     validateFiles(files);
@@ -89,7 +89,7 @@ public class UploadService {
 
     for (MultipartFile file : files) {
       String originalFileName = file.getOriginalFilename();
-      long maxFileSize = 5 * 1024 * 1024; // 5 MB
+      final long maxFileSize = 5 * 1024 * 1024; // 5 MB
 
       try {
         BufferedImage image = ImageIO.read(file.getInputStream());
