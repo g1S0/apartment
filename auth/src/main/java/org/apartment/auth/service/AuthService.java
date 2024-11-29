@@ -63,8 +63,6 @@ public class AuthService {
   private void saveUserToken(User user, String jwtToken) {
     log.debug("Saving token for user: {}", user.getEmail());
     var token = Token.builder().user(user).token(jwtToken).revoked(false).build();
-    System.out.println("TESTING");
-    System.out.println(token);
     tokenRepository.save(token);
   }
 
