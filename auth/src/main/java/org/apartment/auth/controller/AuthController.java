@@ -46,4 +46,9 @@ public class AuthController {
 
     return ResponseEntity.ok(authResponse);
   }
+
+  @PostMapping("/validate-token")
+  public ResponseEntity<Void> validateToken() {
+    return ResponseEntity.ok().build();
+  }
 }
