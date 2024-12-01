@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,10 +47,18 @@ public class JwtService {
   private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails,
                             long expiration, Integer userId) {
     extraClaims.put("user_id", userId);
+
+    String randomValue = generateShortUuid();
+    extraClaims.put("random_value", randomValue);
+
     return Jwts.builder().claims(extraClaims).subject(userDetails.getUsername())
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + expiration)).signWith(getSignInKey())
         .compact();
+  }
+
+  private String generateShortUuid() {
+    return UUID.randomUUID().toString().replace("-", "").substring(0, 8);
   }
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
