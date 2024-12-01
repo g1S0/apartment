@@ -17,7 +17,7 @@ public class PropertyMapperTest {
   public void testToDto() {
     Property property = Property.builder().id(1L).title("Apartment").description("Test text")
         .type(PropertyType.APARTMENT).price(BigDecimal.valueOf(1000000)).city("Msk")
-        .status(PropertyStatus.AVAILABLE).postedBy(1L).createdAt(LocalDate.now())
+        .status(PropertyStatus.AVAILABLE).postedBy(123).createdAt(LocalDate.now())
         .updatedAt(LocalDate.now()).build();
 
 
@@ -40,7 +40,7 @@ public class PropertyMapperTest {
   public void testToEntity() {
     PropertyDto propertyDto = PropertyDto.builder().title("Apartment").description("Test text")
         .type(PropertyType.APARTMENT).price(BigDecimal.valueOf(1000000)).city("Msk")
-        .status(PropertyStatus.AVAILABLE).postedBy(1L).createdAt(LocalDate.now())
+        .status(PropertyStatus.AVAILABLE).postedBy(123).createdAt(LocalDate.now())
         .updatedAt(LocalDate.now()).build();
 
     Property property = propertyMapper.toEntity(propertyDto);
