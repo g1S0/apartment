@@ -7,7 +7,6 @@ import io.jsonwebtoken.security.Keys;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,22 +26,26 @@ public class JwtService {
     return extractClaim(token, Claims::getSubject);
   }
 
+  public Integer extractUserId(String token) {
+    return extractClaim(token, claims -> (Integer) claims.get("user_id"));
+  }
+
   public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
     final Claims claims = extractAllClaims(token);
     return claimsResolver.apply(claims);
   }
 
-  public String generateToken(UserDetails userDetails) {
-    return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+  public String generateToken(UserDetails userDetails, Integer userId) {
+    return buildToken(new HashMap<>(), userDetails, refreshExpiration, userId);
   }
 
-  public String generateRefreshToken(UserDetails userDetails) {
-    return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+  public String generateRefreshToken(UserDetails userDetails, Integer userId) {
+    return buildToken(new HashMap<>(), userDetails, refreshExpiration, userId);
   }
 
   private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails,
-                            long expiration) {
-    extraClaims.put("random_value", UUID.randomUUID().toString());
+                            long expiration, Integer userId) {
+    extraClaims.put("user_id", userId);
     return Jwts.builder().claims(extraClaims).subject(userDetails.getUsername())
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + expiration)).signWith(getSignInKey())
