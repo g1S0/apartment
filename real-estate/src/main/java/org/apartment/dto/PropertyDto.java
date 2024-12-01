@@ -42,8 +42,7 @@ public class PropertyDto {
   @NotNull(message = "Status is required")
   private PropertyStatus status;
 
-  @NotNull(message = "Posted by is required")
-  private Long postedBy;
+  private Integer postedBy;
 
   private List<PropertyImage> images;
 
