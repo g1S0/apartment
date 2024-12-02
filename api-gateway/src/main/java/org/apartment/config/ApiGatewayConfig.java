@@ -17,27 +17,20 @@ public class ApiGatewayConfig {
   public RouteLocator routeLocator(RouteLocatorBuilder builder) {
     return builder.routes()
         // /api/v1/auth
-        .route("auth-register", r -> r.path("/api/v1/auth/register").uri("http://localhost:8081"))
-        .route("auth-authenticate",
-            r -> r.path("/api/v1/auth/authenticate").uri("http://localhost:8081"))
-        .route("auth-refresh-token",
-            r -> r.path("/api/v1/auth/refresh-token").uri("http://localhost:8081"))
+        .route("auth-register", r -> r.path("/api/v1/auth/register").uri("lb://auth"))
+        .route("auth-authenticate", r -> r.path("/api/v1/auth/authenticate").uri("lb://auth"))
+        .route("auth-refresh-token", r -> r.path("/api/v1/auth/refresh-token").uri("lb://auth"))
 
         // /api/v1/users
-        .route("users", r -> r.path("/api/v1/users").uri("http://localhost:8081"))
+        .route("users", r -> r.path("/api/v1/users").uri("lb://auth"))
 
         // POST /api/v1/property
-        .route("property-post", r -> r
-            .path("/api/v1/property")
-            .and().method(HttpMethod.POST)
-            .filters(f -> f.filter(gatewayFilter))
-            .uri("http://localhost:8082"))
+        .route("property-post", r -> r.path("/api/v1/property").and().method(HttpMethod.POST)
+            .filters(f -> f.filter(gatewayFilter)).uri("lb://real-estate"))
 
         // GET /api/v1/property
-        .route("property-get", r -> r
-            .path("/api/v1/property")
-            .and().method(HttpMethod.GET)
-            .uri("http://localhost:8082"))
+        .route("property-get",
+            r -> r.path("/api/v1/property").and().method(HttpMethod.GET).uri("lb://real-estate"))
 
         .build();
   }

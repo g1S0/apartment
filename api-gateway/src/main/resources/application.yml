@@ -9,3 +9,5 @@ spring:
       discovery:
         locator:
           enabled: true
+  application:
+    name: api-gateway
