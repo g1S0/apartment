@@ -40,7 +40,7 @@ class JwtServiceTest {
   void testGenerateToken() {
     when(userDetails.getUsername()).thenReturn("test@gmail.com");
 
-    String token = jwtService.generateToken(userDetails);
+    String token = jwtService.generateToken(userDetails, 1);
 
     assertNotNull(token);
     assertTrue(jwtService.isTokenValid(token, userDetails));
@@ -50,7 +50,7 @@ class JwtServiceTest {
   void testExtractUsername() {
     String expectedUsername = "test@gmail.com";
     when(userDetails.getUsername()).thenReturn(expectedUsername);
-    String token = jwtService.generateToken(userDetails);
+    String token = jwtService.generateToken(userDetails, 1);
     String username = jwtService.extractUsername(token);
     assertEquals(expectedUsername, username);
   }
@@ -58,19 +58,28 @@ class JwtServiceTest {
   @Test
   void testInvalidTokenSignature() {
     when(userDetails.getUsername()).thenReturn("test@gmail.com");
-    String token = jwtService.generateToken(userDetails);
+    String token = jwtService.generateToken(userDetails, 1);
     String invalidToken = token + "modified";
     assertThrows(SignatureException.class, () -> jwtService.extractUsername(invalidToken));
   }
 
-
   @Test
   void testExtractClaim() {
     when(userDetails.getUsername()).thenReturn("test@gmail.com");
-    String token = jwtService.generateToken(userDetails);
+    String token = jwtService.generateToken(userDetails, 1);
 
     String username = jwtService.extractClaim(token, Claims::getSubject);
     assertNotNull(username);
     assertEquals("test@gmail.com", username);
+  }
+
+  @Test
+  void testExtractUserId() {
+    when(userDetails.getUsername()).thenReturn("test@gmail.com");
+    String token = jwtService.generateToken(userDetails, 123);
+
+    Integer userId = jwtService.extractUserId(token);
+    assertNotNull(userId);
+    assertEquals(123, userId);
   }
 }

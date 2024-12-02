@@ -27,26 +27,38 @@ public class JwtService {
     return extractClaim(token, Claims::getSubject);
   }
 
+  public Integer extractUserId(String token) {
+    return extractClaim(token, claims -> (Integer) claims.get("user_id"));
+  }
+
   public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
     final Claims claims = extractAllClaims(token);
     return claimsResolver.apply(claims);
   }
 
-  public String generateToken(UserDetails userDetails) {
-    return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+  public String generateToken(UserDetails userDetails, Integer userId) {
+    return buildToken(new HashMap<>(), userDetails, refreshExpiration, userId);
   }
 
-  public String generateRefreshToken(UserDetails userDetails) {
-    return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+  public String generateRefreshToken(UserDetails userDetails, Integer userId) {
+    return buildToken(new HashMap<>(), userDetails, refreshExpiration, userId);
   }
 
   private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails,
-                            long expiration) {
-    extraClaims.put("random_value", UUID.randomUUID().toString());
+                            long expiration, Integer userId) {
+    extraClaims.put("user_id", userId);
+
+    String randomValue = generateShortUuid();
+    extraClaims.put("random_value", randomValue);
+
     return Jwts.builder().claims(extraClaims).subject(userDetails.getUsername())
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + expiration)).signWith(getSignInKey())
         .compact();
+  }
+
+  private String generateShortUuid() {
+    return UUID.randomUUID().toString().replace("-", "").substring(0, 8);
   }
 
   public boolean isTokenValid(String token, UserDetails userDetails) {

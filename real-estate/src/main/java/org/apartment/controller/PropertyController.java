@@ -10,6 +10,7 @@ import org.apartment.service.PropertyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -25,7 +26,9 @@ public class PropertyController {
   @PostMapping
   public ResponseEntity<Property> createProperty(
       @RequestPart("data") @Valid PropertyDto propertyDto,
-      @RequestParam("image") MultipartFile[] imageFiles) throws Exception {
+      @RequestParam("image") MultipartFile[] imageFiles, @RequestHeader("X-User-Id") String userId)
+      throws Exception {
+    propertyDto.setPostedBy(Integer.parseInt(userId));
     Property property = PropertyMapper.INSTANCE.toEntity(propertyDto);
     Property createdProperty = propertyService.createProperty(property, imageFiles);
     return ResponseEntity.ok(createdProperty);
