@@ -30,6 +30,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 @Slf4j
 public class UploadService {
   private static final Set<String> ALLOWED_EXTENSIONS = Set.of("jpg", "jpeg");
+  private static final int MAX_FILES = 3;
   private final S3Client s3Client;
   private final String s3StorageEndpoint;
   private final String bucketName;
@@ -88,7 +89,7 @@ public class UploadService {
   }
 
   void validateFiles(MultipartFile[] files) throws FileValidationException {
-    if (files.length > 3) {
+    if (files.length > MAX_FILES) {
       throw new FileCountExceededException("Maximum amount of files exceeded");
     }
 
