@@ -1,17 +1,19 @@
 server:
-  port: 8083
+  port: ${EMAIL_NOTIFICATION_SERVER_PORT}
 
 spring:
+  application:
+    name: email-notification
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${EMAIL}
-    password: ${PASSWORD}
+    host: ${EMAIL_NOTIFICATION_MAIL_HOST}
+    port: ${EMAIL_NOTIFICATION_MAIL_PORT}
+    username: ${EMAIL_NOTIFICATION_MAIL_USERNAME}
+    password: ${EMAIL_NOTIFICATION_MAIL_PASSWORD}
     properties:
       mail:
         smtp:
-          auth: true
+          auth: ${EMAIL_NOTIFICATION_MAIL_SMTP_AUTH}
           starttls:
-            enable: true
-  application:
-    name: email-notification
+            enable: ${EMAIL_NOTIFICATION_MAIL_SMTP_STARTTLS_ENABLE}

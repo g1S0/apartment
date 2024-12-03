@@ -5,11 +5,11 @@ services:
     image: postgres:15
     container_name: user_db
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: user_db
+      POSTGRES_USER: ${USER_DB_USERNAME}
+      POSTGRES_PASSWORD: ${USER_DB_PASSWORD}
+      POSTGRES_DB: ${USER_DB_NAME}
     ports:
-      - "5434:5432"
+      - "${USER_DB_PORT}:5432"
     volumes:
       - user_db_data:/var/lib/postgresql/data
     networks:
@@ -19,11 +19,11 @@ services:
     image: postgres:15
     container_name: real_estate_db
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: real_estate_db
+      POSTGRES_USER: ${REAL_ESTATE_USERNAME}
+      POSTGRES_PASSWORD: ${REAL_ESTATE_PASSWORD}
+      POSTGRES_DB: ${REAL_ESTATE_DB_NAME}
     ports:
-      - "5435:5432"
+      - "${REAL_ESTATE_DB_PORT}:5432"
     volumes:
       - real_estate_db_data:/var/lib/postgresql/data
     networks:
@@ -33,10 +33,10 @@ services:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeper
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_CLIENT_PORT}
+      ZOOKEEPER_TICK_TIME: ${ZOOKEEPER_TICK_TIME}
     ports:
-      - "2181:2181"
+      - "${ZOOKEEPER_CLIENT_PORT}:2181"
     networks:
       - app_network
 
@@ -44,14 +44,14 @@ services:
     image: confluentinc/cp-kafka:7.5.0
     container_name: notification_kafka
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_BROKER_ID: ${KAFKA_BROKER_ID}
+      KAFKA_ZOOKEEPER_CONNECT: ${KAFKA_ZOOKEEPER_CONNECT}
+      KAFKA_ADVERTISED_LISTENERS: ${KAFKA_ADVERTISED_LISTENERS}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: ${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP}
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: ${KAFKA_AUTO_CREATE_TOPICS_ENABLE}
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}
     ports:
-      - "9092:9092"
+      - "${KAFKA_ADVERTISED_LISTENERS_PORT}:9092"
     depends_on:
       - zookeeper
     networks:
