@@ -1,23 +1,23 @@
 version: '3.8'
 
 services:
-  db:
+  user_db:
     image: postgres:15
-    container_name: postgres_db
+    container_name: user_db
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
-      POSTGRES_DB: places_attractions_db
+      POSTGRES_DB: user_db
     ports:
       - "5434:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - user_db_data:/var/lib/postgresql/data
     networks:
-      - postgres_network
+      - app_network
 
   real_estate_db:
     image: postgres:15
-    container_name: postgres_real_estate_db
+    container_name: real_estate_db
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
@@ -25,9 +25,9 @@ services:
     ports:
       - "5435:5432"
     volumes:
-      - real_estate_postgres_data:/var/lib/postgresql/data
+      - real_estate_db_data:/var/lib/postgresql/data
     networks:
-      - postgres_network
+      - app_network
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -40,9 +40,9 @@ services:
     networks:
       - app_network
 
-  kafka:
+  notification_kafka:
     image: confluentinc/cp-kafka:7.5.0
-    container_name: kafka
+    container_name: notification_kafka
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -58,9 +58,8 @@ services:
       - app_network
 
 volumes:
-  postgres_data:
-  real_estate_postgres_data:
+  user_db_data:
+  real_estate_db_data:
 
 networks:
-  postgres_network:
   app_network:
