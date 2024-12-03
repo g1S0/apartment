@@ -34,7 +34,7 @@ import org.testcontainers.utility.DockerImageName;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
-public class PropertySearchControllerIT {
+public class PropertySearchControllerIntegrationTest {
 
   @Autowired
   private MockMvc mockMvc;
