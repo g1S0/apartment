@@ -11,7 +11,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
+import org.apartment.exception.FileCountExceededException;
+import org.apartment.exception.FileReadException;
+import org.apartment.exception.FileSizeExceededException;
 import org.apartment.exception.FileValidationException;
+import org.apartment.exception.InvalidFileExtensionException;
+import org.apartment.exception.InvalidFileNameException;
+import org.apartment.exception.InvalidImageFileException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,7 +44,6 @@ public class UploadService {
 
   public List<String> uploadFiles(MultipartFile[] files) {
     log.info("Starting file upload. Total files to upload: {}", files.length);
-
     validateFiles(files);
     log.info("File validation completed successfully.");
 
@@ -82,9 +87,9 @@ public class UploadService {
     return fileUrls;
   }
 
-  private void validateFiles(MultipartFile[] files) throws FileValidationException {
+  void validateFiles(MultipartFile[] files) throws FileValidationException {
     if (files.length > 3) {
-      throw new FileValidationException("Maximum amount of files exceeded");
+      throw new FileCountExceededException("Maximum amount of files exceeded");
     }
 
     for (MultipartFile file : files) {
@@ -94,24 +99,24 @@ public class UploadService {
       try {
         BufferedImage image = ImageIO.read(file.getInputStream());
         if (image == null) {
-          throw new FileValidationException("Invalid image file");
+          throw new InvalidImageFileException("Invalid image file");
         }
       } catch (IOException e) {
-        throw new FileValidationException("Error reading the image file");
+        throw new FileReadException("Error reading the image file");
       }
 
       if (originalFileName == null || originalFileName.isEmpty()) {
-        throw new FileValidationException("File name should be valid");
+        throw new InvalidFileNameException("File name should be valid");
       }
 
       String fileExtension =
           originalFileName.substring(originalFileName.lastIndexOf('.') + 1).toLowerCase();
       if (!ALLOWED_EXTENSIONS.contains(fileExtension)) {
-        throw new FileValidationException("Only JPG and JPEG formats are allowed");
+        throw new InvalidFileExtensionException("Only JPG and JPEG formats are allowed");
       }
 
       if (file.getSize() > maxFileSize) {
-        throw new FileValidationException("File size exceeds the maximum allowed size of 5 MB");
+        throw new FileSizeExceededException("File size exceeds the maximum allowed size of 5 MB");
       }
     }
   }
