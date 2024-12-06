@@ -21,3 +21,8 @@ application:
       expiration: ${SECURITY_JWT_EXPIRATION}
       refresh-token:
         expiration: ${SECURITY_JWT_REFRESH_TOKEN_EXPIRATION}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}

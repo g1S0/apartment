@@ -17,3 +17,8 @@ spring:
           auth: ${EMAIL_NOTIFICATION_MAIL_SMTP_AUTH}
           starttls:
             enable: ${EMAIL_NOTIFICATION_MAIL_SMTP_STARTTLS_ENABLE}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}

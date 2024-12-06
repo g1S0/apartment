@@ -11,3 +11,8 @@ spring:
           enabled: true
   application:
     name: api-gateway
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
