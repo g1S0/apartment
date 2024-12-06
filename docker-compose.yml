@@ -57,6 +57,100 @@ services:
     networks:
       - app_network
 
+  tapart-service-registry:
+    image: tapart-service-registry
+    container_name: tapart-service-registry
+    ports:
+      - "${SERVICE_REGISTRY_SERVER_PORT}:${SERVICE_REGISTRY_SERVER_PORT}"
+    environment:
+      - SERVICE_REGISTRY_SERVER_PORT=${SERVICE_REGISTRY_SERVER_PORT}
+      - EUREKA_INSTANCE_HOSTNAME=${EUREKA_INSTANCE_HOSTNAME}
+      - EUREKA_CLIENT_FETCH_REGISTRY=${EUREKA_CLIENT_FETCH_REGISTRY}
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=${EUREKA_CLIENT_REGISTER_WITH_EUREKA}
+    networks:
+      - app_network
+
+  tapart-auth:
+    image: tapart-auth
+    container_name: tapart-auth
+    ports:
+      - "${USER_SERVER_PORT}:${USER_SERVER_PORT}"
+    environment:
+      - USER_SERVER_PORT=${USER_SERVER_PORT}
+      - USER_DB_HOST=${USER_DB_HOST}
+      - USER_DB_PORT=${USER_DB_PORT}
+      - USER_DB_NAME=${USER_DB_NAME}
+      - USER_DB_USERNAME=${USER_DB_USERNAME}
+      - USER_DB_PASSWORD=${USER_DB_PASSWORD}
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+      - SECURITY_JWT_SECRET_KEY=${SECURITY_JWT_SECRET_KEY}
+      - SECURITY_JWT_EXPIRATION=${SECURITY_JWT_EXPIRATION}
+      - SECURITY_JWT_REFRESH_TOKEN_EXPIRATION=${SECURITY_JWT_REFRESH_TOKEN_EXPIRATION}
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+    depends_on:
+      - user_db
+      - tapart-service-registry
+    networks:
+      - app_network
+
+  tapart-real-estate:
+    image: tapart-real-estate
+    container_name: tapart-real-estate
+    ports:
+      - "${REAL_ESTATE_SERVER_PORT}:${REAL_ESTATE_SERVER_PORT}"
+    environment:
+      - REAL_ESTATE_SERVER_PORT=${REAL_ESTATE_SERVER_PORT}
+      - REAL_ESTATE_DB_HOST=${REAL_ESTATE_DB_HOST}
+      - REAL_ESTATE_DB_PORT=5432
+      - REAL_ESTATE_DB_NAME=${REAL_ESTATE_DB_NAME}
+      - REAL_ESTATE_USERNAME=${REAL_ESTATE_USERNAME}
+      - REAL_ESTATE_PASSWORD=${REAL_ESTATE_PASSWORD}
+      - REAL_ESTATE_AWS_S3_ACCESS_KEY=${REAL_ESTATE_AWS_S3_ACCESS_KEY}
+      - REAL_ESTATE_AWS_S3_SECRET_KEY=${REAL_ESTATE_AWS_S3_SECRET_KEY}
+      - REAL_ESTATE_AWS_S3_REGION=${REAL_ESTATE_AWS_S3_REGION}
+      - REAL_ESTATE_AWS_S3_ENDPOINT=${REAL_ESTATE_AWS_S3_ENDPOINT}
+      - REAL_ESTATE_AWS_S3_BUCKET_NAME=${REAL_ESTATE_AWS_S3_BUCKET_NAME}
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+    depends_on:
+      - real_estate_db
+      - tapart-service-registry
+    networks:
+      - app_network
+
+  tapart-email-notification:
+    image: tapart-email-notification
+    container_name: tapart-email-notification
+    ports:
+      - "${EMAIL_NOTIFICATION_SERVER_PORT}:${EMAIL_NOTIFICATION_SERVER_PORT}"
+    environment:
+      - EMAIL_NOTIFICATION_SERVER_PORT=${EMAIL_NOTIFICATION_SERVER_PORT}
+      - EMAIL_NOTIFICATION_MAIL_USERNAME=${EMAIL_NOTIFICATION_MAIL_USERNAME}
+      - EMAIL_NOTIFICATION_MAIL_PASSWORD=${EMAIL_NOTIFICATION_MAIL_PASSWORD}
+      - EMAIL_NOTIFICATION_MAIL_HOST=${EMAIL_NOTIFICATION_MAIL_HOST}
+      - EMAIL_NOTIFICATION_MAIL_PORT=${EMAIL_NOTIFICATION_MAIL_PORT}
+      - EMAIL_NOTIFICATION_MAIL_SMTP_AUTH=${EMAIL_NOTIFICATION_MAIL_SMTP_AUTH}
+      - EMAIL_NOTIFICATION_MAIL_SMTP_STARTTLS_ENABLE=${EMAIL_NOTIFICATION_MAIL_SMTP_STARTTLS_ENABLE}
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+    depends_on:
+      - tapart-service-registry
+      - notification_kafka
+    networks:
+      - app_network
+
+  tapart-api-gateway:
+    image: tapart-api-gateway
+    container_name: tapart-api-gateway
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    environment:
+      - SERVER_PORT=${SERVER_PORT}
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+    depends_on:
+      - tapart-service-registry
+    networks:
+      - app_network
+
 volumes:
   user_db_data:
   real_estate_db_data:
