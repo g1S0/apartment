@@ -1,4 +1,4 @@
-package org.apartment.auth.repository;
+package org.apartment.repository;
 
 import java.util.List;
 import java.util.Optional;
