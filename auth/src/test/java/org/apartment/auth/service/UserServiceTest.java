@@ -30,7 +30,7 @@ class UserServiceTest {
   private UserRepository userRepository;
 
   private User testUser =
-      User.builder().id(1).firstName("John").secondName("Doe").email("test@example.com")
+      User.builder().id(1L).firstName("John").secondName("Doe").email("test@example.com")
           .password("encodedPassword").build();
 
   private final String currentPassword = "currentPassword";
