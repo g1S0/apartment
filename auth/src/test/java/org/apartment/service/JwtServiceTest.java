@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
-import org.apartment.service.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
