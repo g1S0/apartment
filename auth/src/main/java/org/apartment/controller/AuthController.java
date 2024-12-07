@@ -69,11 +69,9 @@ public class AuthController {
     }
 
     try {
-      System.out.println("TESTING");
       Long userId = jwtService.extractUserId(token);
       return ResponseEntity.ok(userId);
     } catch (Exception e) {
-      System.out.println(e.getMessage());
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token", e);
     }
   }
