@@ -1,4 +1,4 @@
-package org.apartment.repository;
+package org.apartment.auth.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +15,7 @@ public interface TokenRepository extends JpaRepository<Token, Integer> {
       on t.user.id = u.id\s
       where u.id = :id and (t.revoked = false)\s
       """)
-  List<Token> findAllValidTokenByUser(@Param("id") Integer id);
+  List<Token> findAllValidTokenByUser(@Param("id") Long id);
 
   @Query("select t from Token t where t.token = :token")
   Optional<Token> findTokenByValue(@Param("token") String token);

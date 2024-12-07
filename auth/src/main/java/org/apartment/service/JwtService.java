@@ -27,8 +27,19 @@ public class JwtService {
     return extractClaim(token, Claims::getSubject);
   }
 
-  public Integer extractUserId(String token) {
-    return extractClaim(token, claims -> (Integer) claims.get("user_id"));
+  public Long extractUserId(String token) {
+    return extractClaim(token, claims -> {
+      Object userId = claims.get("user_id");
+
+      if (userId instanceof Integer) {
+        return ((Integer) userId).longValue();
+      } else if (userId instanceof Long) {
+        return (Long) userId;
+      } else {
+        throw new IllegalArgumentException(
+            "Invalid type for user_id: " + userId.getClass().getName());
+      }
+    });
   }
 
   public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -36,16 +47,16 @@ public class JwtService {
     return claimsResolver.apply(claims);
   }
 
-  public String generateToken(UserDetails userDetails, Integer userId) {
+  public String generateToken(UserDetails userDetails, long userId) {
     return buildToken(new HashMap<>(), userDetails, refreshExpiration, userId);
   }
 
-  public String generateRefreshToken(UserDetails userDetails, Integer userId) {
+  public String generateRefreshToken(UserDetails userDetails, long userId) {
     return buildToken(new HashMap<>(), userDetails, refreshExpiration, userId);
   }
 
   private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails,
-                            long expiration, Integer userId) {
+                            long expiration, long userId) {
     extraClaims.put("user_id", userId);
 
     String randomValue = generateShortUuid();

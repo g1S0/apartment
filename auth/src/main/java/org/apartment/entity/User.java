@@ -23,7 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class User implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
+  private Long id;
   private String firstName;
   private String secondName;
   @Column(unique = true)

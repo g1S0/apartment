@@ -65,7 +65,7 @@ public class Property {
   private PropertyStatus status;
 
   @Column(name = "posted_by", nullable = false)
-  private Integer postedBy;
+  private Long postedBy;
 
   @Column(name = "created_at", updatable = false)
   @GenericField
