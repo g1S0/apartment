@@ -1,0 +1,106 @@
+name: Build Services
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-api-gateway:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build api-gateway and run checks
+        run: |
+          cd api-gateway
+          mvn clean verify
+
+      - name: Upload Checkstyle report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: checkstyle-report
+          path: api-gateway/target/checkstyle-result.xml
+
+  build-auth:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build auth and run tests with coverage
+        run: |
+          cd auth
+          mvn clean verify
+
+      - name: Upload Checkstyle report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: checkstyle-report
+          path: auth/target/checkstyle-result.xml
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: auth/target/surefire-reports/*.xml
+
+  build-email-notification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build email-notification and run checks
+        run: |
+          cd email-notification
+          mvn clean verify
+
+      - name: Upload Checkstyle report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: checkstyle-report
+          path: email-notification/target/checkstyle-result.xml
+
+  build-real-estate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build real-estate and run tests with coverage
+        run: |
+          cd real-estate
+          mvn clean verify
+
+      - name: Upload Checkstyle report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: checkstyle-report
+          path: real-estate/target/checkstyle-result.xml
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: real-estate/target/surefire-reports/*.xml
+
+  build-service-registry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build service-registry and run checks
+        run: |
+          cd service-registry
+          mvn clean verify
+
+      - name: Upload Checkstyle report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: checkstyle-report
+          path: service-registry/target/checkstyle-result.xml

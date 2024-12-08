@@ -130,6 +130,28 @@
                             </outputDirectory>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>70%</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                            <dataFile>${project.build.directory}/jacoco-output/merged.exec</dataFile>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -144,6 +166,9 @@
                         <phase>package</phase>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

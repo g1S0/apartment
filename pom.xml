@@ -184,12 +184,15 @@
                     </dependencies>
                     <configuration>
                         <configLocation>config/checkstyle.xml</configLocation>
+                        <violationSeverity>warnings</violationSeverity>
+                        <outputFile>${project.build.directory}/checkstyle-result.xml</outputFile>
                     </configuration>
                     <executions>
                         <execution>
                             <goals>
                                 <goal>check</goal>
                             </goals>
+                            <phase>validate</phase>
                         </execution>
                     </executions>
                 </plugin>
