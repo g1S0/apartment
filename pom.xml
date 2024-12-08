@@ -140,11 +140,19 @@
     <build>
         <pluginManagement>
             <plugins>
-                <!-- Spring Boot Plugin -->
+                <!-- Spring Boot Fat Jar plugin -->
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring.boot.maven.plugin.version}</version>
+                    <version>3.4.0</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                            <phase>package</phase>
+                        </execution>
+                    </executions>
                 </plugin>
 
                 <!-- Maven Compiler Plugin -->
