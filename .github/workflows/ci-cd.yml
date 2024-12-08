@@ -74,7 +74,7 @@ jobs:
 
       - name: Upload Checkstyle report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: checkstyle-report
           path: email-notification/target/checkstyle-result.xml
@@ -103,7 +103,7 @@ jobs:
 
       - name: Upload test reports
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: real-estate/target/surefire-reports/*.xml
