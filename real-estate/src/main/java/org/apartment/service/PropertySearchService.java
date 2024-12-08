@@ -22,8 +22,8 @@ public class PropertySearchService {
   }
 
   public List<Property> searchProperties(PropertySearchDto propertySearchDto) {
-    log.info("Starting search for properties with keyword: {}, price range: {} - {}, " +
-            "date range: {} - {}, property type: {}, city: {}", propertySearchDto.getKeyword(),
+    log.info("Starting search for properties with keyword: {}, price range: {} - {}, "
+            + "date range: {} - {}, property type: {}, city: {}", propertySearchDto.getKeyword(),
         propertySearchDto.getMinPrice(), propertySearchDto.getMaxPrice(),
         propertySearchDto.getStartDate(), propertySearchDto.getEndDate(),
         propertySearchDto.getPropertyType(), propertySearchDto.getCity());
