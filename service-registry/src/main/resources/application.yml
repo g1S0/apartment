@@ -2,10 +2,11 @@ spring:
   application:
     name: service-registry
 server:
-  port: 8761
+  port: ${SERVICE_REGISTRY_SERVER_PORT}
+
 eureka:
   instance:
-    hostname: localhost
+    hostname: ${EUREKA_INSTANCE_HOSTNAME}
   client:
-    fetch-registry: false
-    register-with-eureka: false
+    fetch-registry: ${EUREKA_CLIENT_FETCH_REGISTRY}
+    register-with-eureka: ${EUREKA_CLIENT_REGISTER_WITH_EUREKA}

@@ -1,0 +1,27 @@
+server:
+  port: ${REAL_ESTATE_SERVER_PORT}
+
+spring:
+  application:
+    name: real-estate
+
+  datasource:
+    url: jdbc:postgresql://${REAL_ESTATE_DB_HOST}:${REAL_ESTATE_DB_PORT}/${REAL_ESTATE_DB_NAME}
+    username: ${REAL_ESTATE_USERNAME}
+    password: ${REAL_ESTATE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_PROTOCOL}://${EUREKA_INSTANCE_HOSTNAME}:${SERVICE_REGISTRY_SERVER_PORT}/eureka/
+  instance:
+    prefer-ip-address: true
+
+aws:
+  s3:
+    access-key: ${REAL_ESTATE_AWS_S3_ACCESS_KEY}
+    secret-key: ${REAL_ESTATE_AWS_S3_SECRET_KEY}
+    region: ${REAL_ESTATE_AWS_S3_REGION}
+    endpoint: ${REAL_ESTATE_AWS_S3_ENDPOINT}
+    bucket-name: ${REAL_ESTATE_AWS_S3_BUCKET_NAME}
