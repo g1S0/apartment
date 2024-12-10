@@ -6,7 +6,9 @@ import org.apartment.dto.PropertyDto;
 import org.apartment.entity.Property;
 import org.apartment.mapper.PropertyMapper;
 import org.apartment.service.PropertyService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,5 +32,11 @@ public class PropertyController {
     Property property = PropertyMapper.INSTANCE.toEntity(propertyDto);
     Property createdProperty = propertyService.createProperty(property, imageFiles);
     return ResponseEntity.ok(createdProperty);
+  }
+
+  @GetMapping("/properties")
+  public Page<PropertyDto> getProperties(@RequestParam(value = "page", defaultValue = "0") int page,
+                                      @RequestParam(value = "size", defaultValue = "10") int size) {
+    return propertyService.getProperties(page, size);
   }
 }
