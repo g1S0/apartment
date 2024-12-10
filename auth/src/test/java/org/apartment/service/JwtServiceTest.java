@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import io.jsonwebtoken.Claims;
@@ -17,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
 class JwtServiceTest {
@@ -101,5 +103,37 @@ class JwtServiceTest {
 
     Long extractedUserId = jwtService.extractUserId(token);
     assertEquals(userId, extractedUserId);
+  }
+
+  @Test
+  void testExtractUserIdFromAuthorizationHeader_MissingHeader() {
+    assertThrows(ResponseStatusException.class,
+        () -> jwtService.extractUserIdFromAuthorizationHeader(null));
+  }
+
+  @Test
+  void testExtractUserIdFromAuthorizationHeader_InvalidHeader() {
+    assertThrows(ResponseStatusException.class,
+        () -> jwtService.extractUserIdFromAuthorizationHeader("InvalidToken"));
+  }
+
+  @Test
+  void testExtractUserIdFromAuthorizationHeader_EmptyToken() {
+    assertThrows(ResponseStatusException.class,
+        () -> jwtService.extractUserIdFromAuthorizationHeader("Bearer "));
+  }
+
+  @Test
+  void testGenerateTokenAndExtractUserIdFromAuthorizationHeader() {
+    UserDetails userDetails = mock(UserDetails.class);
+    when(userDetails.getUsername()).thenReturn("testUser");
+
+    long expectedUserId = 123L;
+
+    String token = jwtService.generateToken(userDetails, expectedUserId);
+
+    Long actualUserId = jwtService.extractUserIdFromAuthorizationHeader("Bearer " + token);
+
+    assertEquals(expectedUserId, actualUserId);
   }
 }
