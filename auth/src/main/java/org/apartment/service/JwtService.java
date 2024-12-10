@@ -50,7 +50,7 @@ public class JwtService {
   }
 
   public String generateToken(UserDetails userDetails, long userId) {
-    return buildToken(new HashMap<>(), userDetails, refreshExpiration, userId);
+    return buildToken(new HashMap<>(), userDetails, jwtExpiration, userId);
   }
 
   public Long extractUserIdFromAuthorizationHeader(String authorizationHeader) {
