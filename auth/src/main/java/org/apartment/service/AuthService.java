@@ -4,8 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apartment.dto.AuthenticationRequestDto;
-import org.apartment.dto.AuthenticationResponseDto;
+import org.apartment.dto.LoginDto;
+import org.apartment.dto.AccessRefreshTokensDto;
 import org.apartment.entity.Token;
 import org.apartment.entity.User;
 import org.apartment.repository.TokenRepository;
@@ -30,7 +30,7 @@ public class AuthService {
   private final KafkaTemplate<String, String> kafkaTemplate;
 
   @Transactional
-  public AuthenticationResponseDto register(User user) {
+  public AccessRefreshTokensDto register(User user) {
     log.debug("Registering user with email: {}", user.getEmail());
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     var savedUser = userRepository.save(user);
@@ -40,12 +40,12 @@ public class AuthService {
     kafkaTemplate.send("email_topic", savedUser.getEmail());
 
     log.info("User registered successfully: {}", user.getEmail());
-    return AuthenticationResponseDto.builder().accessToken(jwtToken)
+    return AccessRefreshTokensDto.builder().accessToken(jwtToken)
         .refreshToken(jwtService.generateRefreshToken(user, user.getId())).build();
   }
 
   @Transactional
-  public AuthenticationResponseDto authenticate(AuthenticationRequestDto request) {
+  public AccessRefreshTokensDto authenticate(LoginDto request) {
     log.debug("Authenticating user with email: {}", request.getEmail());
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
@@ -56,7 +56,7 @@ public class AuthService {
     saveUserToken(user, jwtToken);
 
     log.info("User authenticated successfully: {}", request.getEmail());
-    return AuthenticationResponseDto.builder().accessToken(jwtToken)
+    return AccessRefreshTokensDto.builder().accessToken(jwtToken)
         .refreshToken(jwtService.generateRefreshToken(user, user.getId())).build();
   }
 
@@ -76,7 +76,7 @@ public class AuthService {
     tokenRepository.saveAll(validUserTokens);
   }
 
-  public AuthenticationResponseDto refreshToken(HttpServletRequest request) {
+  public AccessRefreshTokensDto refreshToken(HttpServletRequest request) {
     log.debug("Refreshing token");
     final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -97,7 +97,7 @@ public class AuthService {
         saveUserToken(user, accessToken);
 
         log.info("Token refreshed successfully for user: {}", userEmail);
-        return AuthenticationResponseDto.builder().accessToken(accessToken)
+        return AccessRefreshTokensDto.builder().accessToken(accessToken)
             .refreshToken(refreshToken).build();
       } else {
         log.error("Invalid refresh token for user: {}", userEmail);

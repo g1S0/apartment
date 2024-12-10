@@ -8,10 +8,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
-import org.apartment.dto.ChangePasswordRequestDto;
+import org.apartment.dto.ChangePasswordDto;
 import org.apartment.entity.User;
 import org.apartment.repository.UserRepository;
-import org.apartment.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -50,8 +49,8 @@ class UserServiceTest {
     when(passwordEncoder.encode(eq(newPassword))).thenReturn("encodedNewPassword");
     when(userRepository.save(any(User.class))).thenReturn(testUser);
 
-    ChangePasswordRequestDto changePasswordRequest =
-        new ChangePasswordRequestDto(currentPassword, newPassword, newPassword);
+    ChangePasswordDto changePasswordRequest =
+        new ChangePasswordDto(currentPassword, newPassword, newPassword);
 
     userService.changePassword(changePasswordRequest, mockPrincipal);
 
@@ -65,8 +64,8 @@ class UserServiceTest {
     String wrongPassword = "wrongPassword";
     when(passwordEncoder.matches(eq(wrongPassword), anyString())).thenReturn(false);
 
-    ChangePasswordRequestDto changePasswordRequest =
-        new ChangePasswordRequestDto(wrongPassword, newPassword, newPassword);
+    ChangePasswordDto changePasswordRequest =
+        new ChangePasswordDto(wrongPassword, newPassword, newPassword);
 
     assertThrows(IllegalStateException.class,
         () -> userService.changePassword(changePasswordRequest, mockPrincipal));
@@ -79,8 +78,8 @@ class UserServiceTest {
     when(passwordEncoder.matches(eq(currentPassword), anyString())).thenReturn(true);
 
     String mismatchedPassword = "mismatchedPassword";
-    ChangePasswordRequestDto changePasswordRequest =
-        new ChangePasswordRequestDto(currentPassword, newPassword, mismatchedPassword);
+    ChangePasswordDto changePasswordRequest =
+        new ChangePasswordDto(currentPassword, newPassword, mismatchedPassword);
 
     assertThrows(IllegalStateException.class,
         () -> userService.changePassword(changePasswordRequest, mockPrincipal));

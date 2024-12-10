@@ -2,7 +2,7 @@ package org.apartment.controller;
 
 import jakarta.validation.Valid;
 import java.security.Principal;
-import org.apartment.dto.ChangePasswordRequestDto;
+import org.apartment.dto.ChangePasswordDto;
 import org.apartment.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,7 +21,7 @@ public class UserController {
   }
 
   @PutMapping
-  public ResponseEntity<Void> changePassword(@RequestBody @Valid ChangePasswordRequestDto request,
+  public ResponseEntity<Void> changePassword(@RequestBody @Valid ChangePasswordDto request,
                                              Principal connectedUser) {
     service.changePassword(request, connectedUser);
     return ResponseEntity.ok().build();

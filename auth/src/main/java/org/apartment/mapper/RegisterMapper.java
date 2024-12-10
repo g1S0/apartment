@@ -1,6 +1,6 @@
 package org.apartment.mapper;
 
-import org.apartment.dto.RegisterRequestDto;
+import org.apartment.dto.UserRegistrationDto;
 import org.apartment.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -9,5 +9,5 @@ import org.mapstruct.factory.Mappers;
 public interface RegisterMapper {
   RegisterMapper INSTANCE = Mappers.getMapper(RegisterMapper.class);
 
-  User toEntity(RegisterRequestDto registerRequest);
+  User toEntity(UserRegistrationDto registerRequest);
 }
