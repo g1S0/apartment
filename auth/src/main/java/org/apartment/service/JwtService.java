@@ -11,8 +11,10 @@ import java.util.UUID;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 @Component
 public class JwtService {
@@ -49,6 +51,21 @@ public class JwtService {
 
   public String generateToken(UserDetails userDetails, long userId) {
     return buildToken(new HashMap<>(), userDetails, refreshExpiration, userId);
+  }
+
+  public Long extractUserIdFromAuthorizationHeader(String authorizationHeader) {
+    if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+          "Invalid or missing Authorization header");
+    }
+
+    String token = authorizationHeader.substring(7);
+
+    if (token.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token is empty");
+    }
+
+    return extractUserId(token);
   }
 
   public String generateRefreshToken(UserDetails userDetails, long userId) {

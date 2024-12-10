@@ -10,14 +10,12 @@ import org.apartment.entity.User;
 import org.apartment.mapper.RegisterMapper;
 import org.apartment.service.AuthService;
 import org.apartment.service.JwtService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -56,23 +54,8 @@ public class AuthController {
   @PostMapping("/validate-token")
   public ResponseEntity<Long> validateToken(
       @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+    Long token = jwtService.extractUserIdFromAuthorizationHeader(authorizationHeader);
 
-    if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          "Invalid or missing Authorization header");
-    }
-
-    String token = authorizationHeader.substring(7);
-
-    if (token.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token is empty");
-    }
-
-    try {
-      Long userId = jwtService.extractUserId(token);
-      return ResponseEntity.ok(userId);
-    } catch (Exception e) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token", e);
-    }
+    return ResponseEntity.ok(token);
   }
 }
