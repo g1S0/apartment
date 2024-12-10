@@ -50,8 +50,4 @@ public class PropertyService {
       throw e;
     }
   }
-
-  public List<Property> getAllProperties() {
-    return propertyRepository.findAll();
-  }
 }
