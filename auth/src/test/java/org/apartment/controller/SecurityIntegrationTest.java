@@ -13,10 +13,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import org.apartment.dto.AuthenticationRequestDto;
-import org.apartment.dto.AuthenticationResponseDto;
-import org.apartment.dto.ChangePasswordRequestDto;
-import org.apartment.dto.RegisterRequestDto;
+import org.apartment.dto.LoginDto;
+import org.apartment.dto.AccessRefreshTokensDto;
+import org.apartment.dto.ChangePasswordDto;
+import org.apartment.dto.UserRegistrationDto;
 import org.apartment.entity.User;
 import org.apartment.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -77,9 +77,9 @@ class SecurityIntegrationTest {
     return UUID.randomUUID().toString().substring(0, 10) + "@example.com";
   }
 
-  private AuthenticationResponseDto registerUser(String email) throws Exception {
-    RegisterRequestDto registerRequest =
-        RegisterRequestDto.builder().firstName("John").secondName("Doe").email(email)
+  private AccessRefreshTokensDto registerUser(String email) throws Exception {
+    UserRegistrationDto registerRequest =
+        UserRegistrationDto.builder().firstName("John").secondName("Doe").email(email)
             .password(password).build();
 
     KafkaOperations template = mock(KafkaOperations.class);
@@ -92,11 +92,11 @@ class SecurityIntegrationTest {
         .andExpect(status().isOk()).andReturn();
 
     String responseJson = mvcResult.getResponse().getContentAsString();
-    return objectMapper.readValue(responseJson, AuthenticationResponseDto.class);
+    return objectMapper.readValue(responseJson, AccessRefreshTokensDto.class);
   }
 
-  private AuthenticationResponseDto authenticateUser(String email) throws Exception {
-    AuthenticationRequestDto authRequest = new AuthenticationRequestDto();
+  private AccessRefreshTokensDto authenticateUser(String email) throws Exception {
+    LoginDto authRequest = new LoginDto();
     authRequest.setEmail(email);
     authRequest.setPassword(password);
 
@@ -106,13 +106,13 @@ class SecurityIntegrationTest {
         .andExpect(status().isOk()).andReturn();
 
     String responseJson = mvcResult.getResponse().getContentAsString();
-    return objectMapper.readValue(responseJson, AuthenticationResponseDto.class);
+    return objectMapper.readValue(responseJson, AccessRefreshTokensDto.class);
   }
 
   @Test
   void testRegister() throws Exception {
     String email = getUniqueEmail();
-    AuthenticationResponseDto token = registerUser(email);
+    AccessRefreshTokensDto token = registerUser(email);
     assertNotNull(token.getAccessToken());
     assertNotNull(token.getRefreshToken());
     Optional<User> user = userRepository.findByEmail(email);
@@ -122,12 +122,12 @@ class SecurityIntegrationTest {
   @Test
   void testAuthenticateAndRefreshToken() throws Exception {
     String email = getUniqueEmail();
-    AuthenticationResponseDto registrationResponse = registerUser(email);
+    AccessRefreshTokensDto registrationResponse = registerUser(email);
     assertNotNull(registrationResponse);
     assertNotNull(registrationResponse.getAccessToken());
     assertNotNull(registrationResponse.getRefreshToken());
 
-    AuthenticationResponseDto authResponse = authenticateUser(email);
+    AccessRefreshTokensDto authResponse = authenticateUser(email);
     assertNotNull(authResponse);
     assertNotNull(authResponse.getAccessToken());
     assertNotNull(authResponse.getRefreshToken());
@@ -136,14 +136,14 @@ class SecurityIntegrationTest {
   @Test
   public void testChangePasswordFlow() throws Exception {
     String email = getUniqueEmail();
-    AuthenticationResponseDto registrationResponse = registerUser(email);
+    AccessRefreshTokensDto registrationResponse = registerUser(email);
     assertNotNull(registrationResponse);
 
     String accessToken = registrationResponse.getAccessToken();
 
     final String newPassword = "NewPassword@456)";
-    ChangePasswordRequestDto changePasswordRequest =
-        new ChangePasswordRequestDto(password, newPassword, newPassword);
+    ChangePasswordDto changePasswordRequest =
+        new ChangePasswordDto(password, newPassword, newPassword);
 
     String changePasswordJson = objectMapper.writeValueAsString(changePasswordRequest);
 
@@ -152,7 +152,7 @@ class SecurityIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON).content(changePasswordJson))
         .andExpect(status().isOk());
 
-    AuthenticationRequestDto newAuthRequest = new AuthenticationRequestDto();
+    LoginDto newAuthRequest = new LoginDto();
     newAuthRequest.setEmail(email);
     newAuthRequest.setPassword(newPassword);
 
@@ -162,7 +162,7 @@ class SecurityIntegrationTest {
             post(AUTHENTICATE_URL).contentType(MediaType.APPLICATION_JSON).content(newAuthRequestJson))
         .andExpect(status().isOk());
 
-    AuthenticationRequestDto oldAuthRequest = new AuthenticationRequestDto();
+    LoginDto oldAuthRequest = new LoginDto();
     oldAuthRequest.setEmail(email);
     oldAuthRequest.setPassword(password);
 

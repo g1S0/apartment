@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChangePasswordRequestDto {
+public class ChangePasswordDto {
   @NotBlank(message = "Current password must not be empty")
   private String currentPassword;
 

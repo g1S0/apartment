@@ -3,7 +3,7 @@ package org.apartment.service;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apartment.dto.ChangePasswordRequestDto;
+import org.apartment.dto.ChangePasswordDto;
 import org.apartment.entity.User;
 import org.apartment.repository.UserRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +18,7 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
   private final UserRepository repository;
 
-  public void changePassword(ChangePasswordRequestDto request, Principal connectedUser) {
+  public void changePassword(ChangePasswordDto request, Principal connectedUser) {
     var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
     log.debug("Attempting to change password for user: {}", user.getEmail());
 

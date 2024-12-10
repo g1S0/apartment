@@ -3,9 +3,9 @@ package org.apartment.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.apartment.dto.AuthenticationRequestDto;
-import org.apartment.dto.AuthenticationResponseDto;
-import org.apartment.dto.RegisterRequestDto;
+import org.apartment.dto.LoginDto;
+import org.apartment.dto.AccessRefreshTokensDto;
+import org.apartment.dto.UserRegistrationDto;
 import org.apartment.entity.User;
 import org.apartment.mapper.RegisterMapper;
 import org.apartment.service.AuthService;
@@ -31,22 +31,22 @@ public class AuthController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<AuthenticationResponseDto> addNewUser(
-      @RequestBody @Valid RegisterRequestDto registerRequest) {
+  public ResponseEntity<AccessRefreshTokensDto> addNewUser(
+      @RequestBody @Valid UserRegistrationDto registerRequest) {
     User user = RegisterMapper.INSTANCE.toEntity(registerRequest);
 
     return ResponseEntity.ok(service.register(user));
   }
 
   @PostMapping("/authenticate")
-  public ResponseEntity<AuthenticationResponseDto> authenticate(
-      @RequestBody @Valid AuthenticationRequestDto request) {
+  public ResponseEntity<AccessRefreshTokensDto> authenticate(
+      @RequestBody @Valid LoginDto request) {
     return ResponseEntity.ok(service.authenticate(request));
   }
 
   @PostMapping("/refresh-token")
-  public ResponseEntity<AuthenticationResponseDto> refreshToken(HttpServletRequest request) {
-    AuthenticationResponseDto authResponse = service.refreshToken(request);
+  public ResponseEntity<AccessRefreshTokensDto> refreshToken(HttpServletRequest request) {
+    AccessRefreshTokensDto authResponse = service.refreshToken(request);
 
     return ResponseEntity.ok(authResponse);
   }
