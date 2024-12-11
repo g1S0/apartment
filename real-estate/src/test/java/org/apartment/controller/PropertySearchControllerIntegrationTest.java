@@ -13,6 +13,8 @@ import org.apartment.dto.PropertyDto;
 import org.apartment.dto.PropertySearchDto;
 import org.apartment.entity.Property;
 import org.apartment.entity.PropertyStatus;
+import org.apartment.entity.PropertyType;
+import org.apartment.repository.PropertyRepository;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.junit.jupiter.api.Assertions;
@@ -43,6 +45,9 @@ public class PropertySearchControllerIntegrationTest {
 
   @Autowired
   private EntityManager entityManager;
+
+  @Autowired
+  private PropertyRepository propertyRepository;
 
   @Container
   public static PostgreSQLContainer<?> postgresContainer =
@@ -166,5 +171,39 @@ public class PropertySearchControllerIntegrationTest {
     Assertions.assertEquals(1, properties.size());
     Assertions.assertTrue(properties.stream().anyMatch(
         p -> p.getDescription().toLowerCase().contains(descriptionKeyword.toLowerCase())));
+  }
+
+  @Test
+  public void testSearchPropertiesAfterPropertySave() throws Exception {
+    Property property = Property.builder().title("Modern Apartment")
+        .description("Luxury apartment with stunning views and modern amenities.")
+        .type(PropertyType.CONDO).price(BigDecimal.valueOf(600000))
+        .city("Los Angeles").status(PropertyStatus.AVAILABLE).postedBy(123L).build();
+
+    propertyRepository.save(property);
+
+    final String descriptionKeyword = "luxury";
+    final BigDecimal targetPrice = BigDecimal.valueOf(600000);
+
+    PropertySearchDto searchDto =
+        PropertySearchDto.builder().keyword(descriptionKeyword)
+            .minPrice(targetPrice).maxPrice(targetPrice)
+            .build();
+
+    String json = objectMapper.writeValueAsString(searchDto);
+
+    String response = mockMvc.perform(
+            get("/api/v1/property/search").contentType(MediaType.APPLICATION_JSON).content(json))
+        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+    List<PropertyDto> properties = objectMapper.readValue(response,
+        objectMapper.getTypeFactory().constructCollectionType(List.class, PropertyDto.class));
+
+    Assertions.assertEquals(1, properties.size());
+    Assertions.assertTrue(properties.stream().anyMatch(
+        p -> p.getDescription().toLowerCase().contains(descriptionKeyword.toLowerCase())));
+
+    Assertions.assertTrue(
+        properties.stream().anyMatch(p -> p.getPrice().compareTo(targetPrice) == 0));
   }
 }
