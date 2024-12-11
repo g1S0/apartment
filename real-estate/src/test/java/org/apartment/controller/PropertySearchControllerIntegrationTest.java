@@ -40,6 +40,8 @@ import org.testcontainers.utility.DockerImageName;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PropertySearchControllerIntegrationTest {
 
+  private static final String API_URL = "/api/v1/property/search";
+
   @Autowired
   private MockMvc mockMvc;
 
@@ -87,9 +89,9 @@ public class PropertySearchControllerIntegrationTest {
 
     String json = objectMapper.writeValueAsString(searchDto);
 
-    String response = mockMvc.perform(
-            get("/api/v1/property/search").contentType(MediaType.APPLICATION_JSON).content(json))
-        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+    String response =
+        mockMvc.perform(get(API_URL).contentType(MediaType.APPLICATION_JSON).content(json))
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
     List<PropertyDto> properties = objectMapper.readValue(response,
         objectMapper.getTypeFactory().constructCollectionType(List.class, PropertyDto.class));
@@ -105,9 +107,9 @@ public class PropertySearchControllerIntegrationTest {
     PropertySearchDto searchDto = PropertySearchDto.builder().city(city).build();
     String json = objectMapper.writeValueAsString(searchDto);
 
-    String response = mockMvc.perform(
-            get("/api/v1/property/search").contentType(MediaType.APPLICATION_JSON).content(json))
-        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+    String response =
+        mockMvc.perform(get(API_URL).contentType(MediaType.APPLICATION_JSON).content(json))
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
     List<PropertyDto> properties = objectMapper.readValue(response,
         objectMapper.getTypeFactory().constructCollectionType(List.class, PropertyDto.class));
@@ -124,9 +126,9 @@ public class PropertySearchControllerIntegrationTest {
 
     String json = objectMapper.writeValueAsString(searchDto);
 
-    String response = mockMvc.perform(
-            get("/api/v1/property/search").contentType(MediaType.APPLICATION_JSON).content(json))
-        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+    String response =
+        mockMvc.perform(get(API_URL).contentType(MediaType.APPLICATION_JSON).content(json))
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
     List<PropertyDto> properties = objectMapper.readValue(response,
         objectMapper.getTypeFactory().constructCollectionType(List.class, PropertyDto.class));
@@ -144,9 +146,9 @@ public class PropertySearchControllerIntegrationTest {
 
     String json = objectMapper.writeValueAsString(searchDto);
 
-    String response = mockMvc.perform(
-            get("/api/v1/property/search").contentType(MediaType.APPLICATION_JSON).content(json))
-        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+    String response =
+        mockMvc.perform(get(API_URL).contentType(MediaType.APPLICATION_JSON).content(json))
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
     List<PropertyDto> properties = objectMapper.readValue(response,
         objectMapper.getTypeFactory().constructCollectionType(List.class, PropertyDto.class));
@@ -161,9 +163,9 @@ public class PropertySearchControllerIntegrationTest {
 
     String json = objectMapper.writeValueAsString(searchDto);
 
-    String response = mockMvc.perform(
-            get("/api/v1/property/search").contentType(MediaType.APPLICATION_JSON).content(json))
-        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+    String response =
+        mockMvc.perform(get(API_URL).contentType(MediaType.APPLICATION_JSON).content(json))
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
     List<PropertyDto> properties = objectMapper.readValue(response,
         objectMapper.getTypeFactory().constructCollectionType(List.class, PropertyDto.class));
@@ -177,8 +179,8 @@ public class PropertySearchControllerIntegrationTest {
   public void testSearchPropertiesAfterPropertySave() throws Exception {
     Property property = Property.builder().title("Modern Apartment")
         .description("Luxury apartment with stunning views and modern amenities.")
-        .type(PropertyType.CONDO).price(BigDecimal.valueOf(600000))
-        .city("Los Angeles").status(PropertyStatus.AVAILABLE).postedBy(123L).build();
+        .type(PropertyType.CONDO).price(BigDecimal.valueOf(600000)).city("Los Angeles")
+        .status(PropertyStatus.AVAILABLE).postedBy(123L).build();
 
     propertyRepository.save(property);
 
@@ -186,15 +188,14 @@ public class PropertySearchControllerIntegrationTest {
     final BigDecimal targetPrice = BigDecimal.valueOf(600000);
 
     PropertySearchDto searchDto =
-        PropertySearchDto.builder().keyword(descriptionKeyword)
-            .minPrice(targetPrice).maxPrice(targetPrice)
-            .build();
+        PropertySearchDto.builder().keyword(descriptionKeyword).minPrice(targetPrice)
+            .maxPrice(targetPrice).build();
 
     String json = objectMapper.writeValueAsString(searchDto);
 
-    String response = mockMvc.perform(
-            get("/api/v1/property/search").contentType(MediaType.APPLICATION_JSON).content(json))
-        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+    String response =
+        mockMvc.perform(get(API_URL).contentType(MediaType.APPLICATION_JSON).content(json))
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
     List<PropertyDto> properties = objectMapper.readValue(response,
         objectMapper.getTypeFactory().constructCollectionType(List.class, PropertyDto.class));
