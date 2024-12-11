@@ -1,0 +1,174 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: "ddasfasdfs"
+      changes:
+        - insert:
+            tableName: property
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: title
+                  value: "Beautiful House in City Center"
+              - column:
+                  name: description
+                  value: "A beautiful house with a garden"
+              - column:
+                  name: type
+                  value: "APARTMENT"
+              - column:
+                  name: price
+                  value: 300000
+              - column:
+                  name: city
+                  value: "New York"
+              - column:
+                  name: status
+                  value: "AVAILABLE"
+              - column:
+                  name: posted_by
+                  value: 123
+              - column:
+                  name: created_at
+                  valueDate: "2024-12-11"
+              - column:
+                  name: updated_at
+                  valueDate: "2024-12-11"
+
+        - insert:
+            tableName: property
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: title
+                  value: "Luxury Apartment"
+              - column:
+                  name: description
+                  value: "Modern apartment in downtown"
+              - column:
+                  name: type
+                  value: "CONDO"
+              - column:
+                  name: price
+                  value: 500000
+              - column:
+                  name: city
+                  value: "Los Angeles"
+              - column:
+                  name: status
+                  value: "SOLD"
+              - column:
+                  name: posted_by
+                  value: 124
+              - column:
+                  name: created_at
+                  valueDate: "2024-12-11"
+              - column:
+                  name: updated_at
+                  valueDate: "2024-12-11"
+
+        - insert:
+            tableName: property
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: title
+                  value: "Cozy Studio in Suburbs"
+              - column:
+                  name: description
+                  value: "Affordable studio in the suburbs"
+              - column:
+                  name: type
+                  value: "APARTMENT"
+              - column:
+                  name: price
+                  value: 150000
+              - column:
+                  name: city
+                  value: "Chicago"
+              - column:
+                  name: status
+                  value: "AVAILABLE"
+              - column:
+                  name: posted_by
+                  value: 125
+              - column:
+                  name: created_at
+                  valueDate: "2024-12-11"
+              - column:
+                  name: updated_at
+                  valueDate: "2024-12-11"
+
+        - insert:
+            tableName: property
+            columns:
+              - column:
+                  name: id
+                  value: 4
+              - column:
+                  name: title
+                  value: "Beachfront Villa"
+              - column:
+                  name: description
+                  value: "Luxury villa with ocean view"
+              - column:
+                  name: type
+                  value: "APARTMENT"
+              - column:
+                  name: price
+                  value: 1000000
+              - column:
+                  name: city
+                  value: "Miami"
+              - column:
+                  name: status
+                  value: "AVAILABLE"
+              - column:
+                  name: posted_by
+                  value: 126
+              - column:
+                  name: created_at
+                  valueDate: "2024-12-11"
+              - column:
+                  name: updated_at
+                  valueDate: "2024-12-11"
+
+        - insert:
+            tableName: property
+            columns:
+              - column:
+                  name: id
+                  value: 5
+              - column:
+                  name: title
+                  value: "Downtown Office Space"
+              - column:
+                  name: description
+                  value: "Spacious office space in the city center"
+              - column:
+                  name: type
+                  value: "CONDO"
+              - column:
+                  name: price
+                  value: 600000
+              - column:
+                  name: city
+                  value: "San Francisco"
+              - column:
+                  name: status
+                  value: "SOLD"
+              - column:
+                  name: posted_by
+                  value: 127
+              - column:
+                  name: created_at
+                  valueDate: "2024-12-11"
+              - column:
+                  name: updated_at
+                  valueDate: "2024-12-11"

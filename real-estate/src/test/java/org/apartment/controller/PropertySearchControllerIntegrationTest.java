@@ -5,19 +5,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
 import org.apartment.dto.PropertyDto;
 import org.apartment.dto.PropertySearchDto;
 import org.apartment.entity.Property;
 import org.apartment.entity.PropertyStatus;
-import org.apartment.entity.PropertyType;
-import org.apartment.repository.PropertyRepository;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,15 +35,23 @@ import org.testcontainers.utility.DockerImageName;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PropertySearchControllerIntegrationTest {
 
   @Autowired
   private MockMvc mockMvc;
 
+  @Autowired
+  private EntityManager entityManager;
+
   @Container
   public static PostgreSQLContainer<?> postgresContainer =
       new PostgreSQLContainer<>("postgres:latest").withDatabaseName("test_real_estate_db")
           .withUsername("test_admin").withPassword("test_admin");
+
+  static {
+    postgresContainer.start();
+  }
 
   @Container
   public static LocalStackContainer localstack =
@@ -59,33 +68,11 @@ public class PropertySearchControllerIntegrationTest {
   }
 
   @BeforeAll
-  public static void setUp(@Autowired PropertyRepository propertyRepository) {
-    Property property1 = Property.builder().title("Beautiful House in City Center")
-        .description("A beautiful house with a garden").type(PropertyType.APARTMENT)
-        .price(BigDecimal.valueOf(300000)).city("New York").status(PropertyStatus.AVAILABLE)
-        .postedBy(123L).images(new ArrayList<>()).build();
+  public void setUp() throws InterruptedException {
+    entityManager = entityManager.getEntityManagerFactory().createEntityManager();
+    SearchSession searchSession = Search.session(entityManager);
 
-    Property property2 =
-        Property.builder().title("Luxury Apartment").description("Modern apartment in downtown")
-            .type(PropertyType.CONDO).price(BigDecimal.valueOf(500000)).city("Los Angeles")
-            .status(PropertyStatus.SOLD).postedBy(124L).images(new ArrayList<>()).build();
-
-    Property property3 = Property.builder().title("Cozy Studio in Suburbs")
-        .description("Affordable studio in the suburbs").type(PropertyType.APARTMENT)
-        .price(BigDecimal.valueOf(150000)).city("Chicago").status(PropertyStatus.AVAILABLE)
-        .postedBy(125L).images(new ArrayList<>()).build();
-
-    Property property4 =
-        Property.builder().title("Beachfront Villa").description("Luxury villa with ocean view")
-            .type(PropertyType.APARTMENT).price(BigDecimal.valueOf(1000000)).city("Miami")
-            .status(PropertyStatus.AVAILABLE).postedBy(126L).images(new ArrayList<>()).build();
-
-    Property property5 = Property.builder().title("Downtown Office Space")
-        .description("Spacious office space in the city center").type(PropertyType.CONDO)
-        .price(BigDecimal.valueOf(600000)).city("San Francisco").status(PropertyStatus.SOLD)
-        .postedBy(127L).images(new ArrayList<>()).build();
-
-    propertyRepository.saveAll(List.of(property1, property2, property3, property4, property5));
+    searchSession.massIndexer(Property.class).threadsToLoadObjects(5).startAndWait();
   }
 
   @Test
