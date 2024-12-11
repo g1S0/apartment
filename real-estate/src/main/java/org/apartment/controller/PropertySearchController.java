@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -23,8 +24,11 @@ public class PropertySearchController {
 
   @GetMapping
   public ResponseEntity<List<PropertyDto>> searchProperties(
-      @RequestBody PropertySearchDto propertySearchDto) {
-    List<Property> properties = propertySearchService.searchProperties(propertySearchDto);
+      @RequestBody PropertySearchDto propertySearchDto,
+      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "size", defaultValue = "10") int size) {
+    List<Property> properties =
+        propertySearchService.searchProperties(propertySearchDto, page, size);
     List<PropertyDto> propertyDtoList =
         properties.stream().map(PropertyMapper.INSTANCE::toDto).collect(Collectors.toList());
     return ResponseEntity.ok(propertyDtoList);
