@@ -6,7 +6,7 @@ spring:
     name: real-estate
 
   datasource:
-    url: jdbc:postgresql://${REAL_ESTATE_DB_HOST}:${REAL_ESTATE_DB_PORT}/${REAL_ESTATE_DB_NAME}
+    url: jdbc:postgresql://${REAL_ESTATE_DB_HOST}:${HOST_REAL_ESTATE_DB_PORT}/${REAL_ESTATE_DB_NAME}
     username: ${REAL_ESTATE_USERNAME}
     password: ${REAL_ESTATE_PASSWORD}
     driver-class-name: org.postgresql.Driver
