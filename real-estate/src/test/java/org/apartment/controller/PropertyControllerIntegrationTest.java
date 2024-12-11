@@ -58,7 +58,7 @@ public class PropertyControllerIntegrationTest {
   @Test
   public void testGetPropertiesPage1() throws Exception {
     MvcResult result =
-        mockMvc.perform(get("/api/v1/property/properties?page=0&size=2")).andExpect(status().isOk())
+        mockMvc.perform(get("/api/v1/property?page=0&size=2")).andExpect(status().isOk())
             .andReturn();
 
     MockHttpServletResponse response = result.getResponse();
@@ -73,7 +73,7 @@ public class PropertyControllerIntegrationTest {
   @Test
   public void testGetPropertiesPage2() throws Exception {
     MvcResult result =
-        mockMvc.perform(get("/api/v1/property/properties?page=1&size=2")).andExpect(status().isOk())
+        mockMvc.perform(get("/api/v1/property?page=1&size=2")).andExpect(status().isOk())
             .andReturn();
 
     MockHttpServletResponse response = result.getResponse();
@@ -86,7 +86,7 @@ public class PropertyControllerIntegrationTest {
 
   @Test
   public void testGetNonExistentPage() throws Exception {
-    MvcResult result = mockMvc.perform(get("/api/v1/property/properties?page=10&size=2"))
+    MvcResult result = mockMvc.perform(get("/api/v1/property?page=10&size=2"))
         .andExpect(status().isOk()).andReturn();
 
     MockHttpServletResponse response = result.getResponse();

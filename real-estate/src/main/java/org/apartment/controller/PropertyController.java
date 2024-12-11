@@ -34,7 +34,7 @@ public class PropertyController {
     return ResponseEntity.ok(createdProperty);
   }
 
-  @GetMapping("/properties")
+  @GetMapping
   public Page<PropertyDto> getProperties(@RequestParam(value = "page", defaultValue = "0") int page,
                                       @RequestParam(value = "size", defaultValue = "10") int size) {
     return propertyService.getProperties(page, size);
