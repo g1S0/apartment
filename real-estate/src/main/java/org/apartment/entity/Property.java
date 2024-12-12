@@ -7,8 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
@@ -21,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
@@ -33,10 +32,9 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 @Table(name = "property")
 @Indexed
 public class Property {
-
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @UuidGenerator
+  private String id;
 
   @Column(nullable = false)
   @FullTextField
@@ -65,7 +63,7 @@ public class Property {
   private PropertyStatus status;
 
   @Column(name = "posted_by", nullable = false)
-  private Long postedBy;
+  private String postedBy;
 
   @Column(name = "created_at", updatable = false)
   @GenericField

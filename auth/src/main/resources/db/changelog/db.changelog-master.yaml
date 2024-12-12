@@ -8,10 +8,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: BIGINT
-                  autoIncrement: true
+                  type: varchar(36)
                   constraints:
                     primaryKey: true
+                    nullable: false
               - column:
                   name: first_name
                   type: varchar(255)
@@ -37,13 +37,13 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: BIGINT
-                  autoIncrement: true
+                  type: varchar(36)
                   constraints:
                     primaryKey: true
+                    nullable: false
               - column:
                   name: token
-                  type: varchar(255)
+                  type: text
                   constraints:
                     unique: true
                     nullable: false
@@ -53,7 +53,7 @@ databaseChangeLog:
                   defaultValueBoolean: false
               - column:
                   name: user_id
-                  type: int
+                  type: varchar(36)
                   constraints:
                     nullable: false
         - addForeignKeyConstraint:

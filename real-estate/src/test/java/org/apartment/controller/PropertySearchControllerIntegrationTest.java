@@ -9,6 +9,7 @@ import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.UUID;
 import org.apartment.dto.PropertyDto;
 import org.apartment.dto.PropertySearchDto;
 import org.apartment.entity.Property;
@@ -180,7 +181,7 @@ public class PropertySearchControllerIntegrationTest {
     Property property = Property.builder().title("Modern Apartment")
         .description("Luxury apartment with stunning views and modern amenities.")
         .type(PropertyType.CONDO).price(BigDecimal.valueOf(600000)).city("Los Angeles")
-        .status(PropertyStatus.AVAILABLE).postedBy(123L).build();
+        .status(PropertyStatus.AVAILABLE).postedBy(UUID.randomUUID().toString()).build();
 
     propertyRepository.save(property);
 

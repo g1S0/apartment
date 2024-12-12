@@ -29,19 +29,8 @@ public class JwtService {
     return extractClaim(token, Claims::getSubject);
   }
 
-  public Long extractUserId(String token) {
-    return extractClaim(token, claims -> {
-      Object userId = claims.get("user_id");
-
-      if (userId instanceof Integer) {
-        return ((Integer) userId).longValue();
-      } else if (userId instanceof Long) {
-        return (Long) userId;
-      } else {
-        throw new IllegalArgumentException(
-            "Invalid type for user_id: " + userId.getClass().getName());
-      }
-    });
+  public String extractUserId(String token) {
+    return extractClaim(token, claims -> (String) claims.get("user_id"));
   }
 
   public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -49,11 +38,11 @@ public class JwtService {
     return claimsResolver.apply(claims);
   }
 
-  public String generateToken(UserDetails userDetails, long userId) {
+  public String generateToken(UserDetails userDetails, String userId) {
     return buildToken(new HashMap<>(), userDetails, jwtExpiration, userId);
   }
 
-  public Long extractUserIdFromAuthorizationHeader(String authorizationHeader) {
+  public String extractUserIdFromAuthorizationHeader(String authorizationHeader) {
     if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           "Invalid or missing Authorization header");
@@ -68,25 +57,19 @@ public class JwtService {
     return extractUserId(token);
   }
 
-  public String generateRefreshToken(UserDetails userDetails, long userId) {
+  public String generateRefreshToken(UserDetails userDetails, String userId) {
     return buildToken(new HashMap<>(), userDetails, refreshExpiration, userId);
   }
 
   private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails,
-                            long expiration, long userId) {
+                            long expiration, String userId) {
     extraClaims.put("user_id", userId);
-
-    String randomValue = generateShortUuid();
-    extraClaims.put("random_value", randomValue);
+    extraClaims.put("unique_id", UUID.randomUUID().toString());
 
     return Jwts.builder().claims(extraClaims).subject(userDetails.getUsername())
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + expiration)).signWith(getSignInKey())
         .compact();
-  }
-
-  private String generateShortUuid() {
-    return UUID.randomUUID().toString().replace("-", "").substring(0, 8);
   }
 
   public boolean isTokenValid(String token, UserDetails userDetails) {

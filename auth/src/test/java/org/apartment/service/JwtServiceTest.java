@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.SignatureException;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +43,7 @@ class JwtServiceTest {
   void testGenerateToken() {
     when(userDetails.getUsername()).thenReturn("test@gmail.com");
 
-    String token = jwtService.generateToken(userDetails, 1L);
+    String token = jwtService.generateToken(userDetails, UUID.randomUUID().toString());
 
     assertNotNull(token);
     assertTrue(jwtService.isTokenValid(token, userDetails));
@@ -52,7 +53,7 @@ class JwtServiceTest {
   void testExtractUsername() {
     String expectedUsername = "test@gmail.com";
     when(userDetails.getUsername()).thenReturn(expectedUsername);
-    String token = jwtService.generateToken(userDetails, 1L);
+    String token = jwtService.generateToken(userDetails, UUID.randomUUID().toString());
     String username = jwtService.extractUsername(token);
     assertEquals(expectedUsername, username);
   }
@@ -60,7 +61,7 @@ class JwtServiceTest {
   @Test
   void testInvalidTokenSignature() {
     when(userDetails.getUsername()).thenReturn("test@gmail.com");
-    String token = jwtService.generateToken(userDetails, 1L);
+    String token = jwtService.generateToken(userDetails, UUID.randomUUID().toString());
     String invalidToken = token + "modified";
     assertThrows(SignatureException.class, () -> jwtService.extractUsername(invalidToken));
   }
@@ -68,7 +69,7 @@ class JwtServiceTest {
   @Test
   void testExtractClaim() {
     when(userDetails.getUsername()).thenReturn("test@gmail.com");
-    String token = jwtService.generateToken(userDetails, 1L);
+    String token = jwtService.generateToken(userDetails, UUID.randomUUID().toString());
 
     String username = jwtService.extractClaim(token, Claims::getSubject);
     assertNotNull(username);
@@ -78,30 +79,11 @@ class JwtServiceTest {
   @Test
   void testExtractUserId() {
     when(userDetails.getUsername()).thenReturn("test@gmail.com");
-    String token = jwtService.generateToken(userDetails, 123L);
+    String userId = UUID.randomUUID().toString();
+    String token = jwtService.generateToken(userDetails, userId);
 
-    Long userId = jwtService.extractUserId(token);
+    String extractedUserId = jwtService.extractUserId(token);
     assertNotNull(userId);
-    assertEquals(123, userId);
-  }
-
-  @Test
-  public void testUserIdWithIntegerValue() {
-    long userId = Integer.MAX_VALUE;
-    when(userDetails.getUsername()).thenReturn("test@gmail.com");
-    String token = jwtService.generateToken(userDetails, userId);
-
-    Long extractedUserId = jwtService.extractUserId(token);
-    assertEquals(userId, extractedUserId);
-  }
-
-  @Test
-  public void testUserIdWithLongValue() {
-    long userId = Long.MAX_VALUE;
-    when(userDetails.getUsername()).thenReturn("test@gmail.com");
-    String token = jwtService.generateToken(userDetails, userId);
-
-    Long extractedUserId = jwtService.extractUserId(token);
     assertEquals(userId, extractedUserId);
   }
 
@@ -128,11 +110,11 @@ class JwtServiceTest {
     UserDetails userDetails = mock(UserDetails.class);
     when(userDetails.getUsername()).thenReturn("testUser");
 
-    long expectedUserId = 123L;
+    String expectedUserId = UUID.randomUUID().toString();
 
     String token = jwtService.generateToken(userDetails, expectedUserId);
 
-    Long actualUserId = jwtService.extractUserIdFromAuthorizationHeader("Bearer " + token);
+    String actualUserId = jwtService.extractUserIdFromAuthorizationHeader("Bearer " + token);
 
     assertEquals(expectedUserId, actualUserId);
   }
