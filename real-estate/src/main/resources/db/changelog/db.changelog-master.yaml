@@ -8,8 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: BIGINT
-                  autoIncrement: true
+                  type: VARCHAR(36)
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -43,7 +42,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: posted_by
-                  type: BIGINT
+                  type: VARCHAR(36)
                   constraints:
                     nullable: false
               - column:
@@ -66,14 +65,13 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: BIGINT
-                  autoIncrement: true
+                  type: VARCHAR(36)
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
                   name: property_id
-                  type: BIGINT
+                  type: VARCHAR(36)
                   constraints:
                     nullable: false
               - column:

@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.security.Principal;
+import java.util.UUID;
 import org.apartment.dto.ChangePasswordDto;
 import org.apartment.entity.User;
 import org.apartment.repository.UserRepository;
@@ -29,9 +30,9 @@ class UserServiceTest {
   @Mock
   private UserRepository userRepository;
 
-  private User testUser =
-      User.builder().id(1L).firstName("John").secondName("Doe").email("test@example.com")
-          .password("encodedPassword").build();
+  private final User testUser =
+      User.builder().id(UUID.randomUUID().toString()).firstName("John").secondName("Doe")
+          .email("test@example.com").password("encodedPassword").build();
 
   private final String currentPassword = "currentPassword";
   private final String newPassword = "newPassword";

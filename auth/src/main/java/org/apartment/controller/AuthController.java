@@ -3,8 +3,8 @@ package org.apartment.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.apartment.dto.LoginDto;
 import org.apartment.dto.AccessRefreshTokensDto;
+import org.apartment.dto.LoginDto;
 import org.apartment.dto.UserRegistrationDto;
 import org.apartment.entity.User;
 import org.apartment.mapper.RegisterMapper;
@@ -39,8 +39,7 @@ public class AuthController {
   }
 
   @PostMapping("/authenticate")
-  public ResponseEntity<AccessRefreshTokensDto> authenticate(
-      @RequestBody @Valid LoginDto request) {
+  public ResponseEntity<AccessRefreshTokensDto> authenticate(@RequestBody @Valid LoginDto request) {
     return ResponseEntity.ok(service.authenticate(request));
   }
 
@@ -52,9 +51,9 @@ public class AuthController {
   }
 
   @PostMapping("/validate-token")
-  public ResponseEntity<Long> validateToken(
+  public ResponseEntity<String> validateToken(
       @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
-    Long token = jwtService.extractUserIdFromAuthorizationHeader(authorizationHeader);
+    String token = jwtService.extractUserIdFromAuthorizationHeader(authorizationHeader);
 
     return ResponseEntity.ok(token);
   }

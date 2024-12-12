@@ -34,7 +34,7 @@ public class CustomGatewayFilter implements GatewayFilter {
 
     return Mono.fromCallable(() -> authClient.validateToken(authHeader)).flatMap(userInfo -> {
       ServerHttpRequest mutatedRequest =
-          exchange.getRequest().mutate().header("X-User-Id", String.valueOf(userInfo)).build();
+          exchange.getRequest().mutate().header("X-User-Id", userInfo).build();
 
       return chain.filter(exchange.mutate().request(mutatedRequest).build());
     });

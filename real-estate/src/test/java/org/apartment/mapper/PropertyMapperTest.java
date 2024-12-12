@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 import org.apartment.dto.PropertyDto;
 import org.apartment.entity.Property;
 import org.apartment.entity.PropertyStatus;
@@ -15,7 +16,7 @@ public class PropertyMapperTest {
 
   @Test
   public void testToDto() {
-    Property property = Property.builder().id(1L).title("Apartment").description("Test text")
+    Property property = Property.builder().id(UUID.randomUUID().toString()).title("Apartment").description("Test text")
         .type(PropertyType.APARTMENT).price(BigDecimal.valueOf(1000000)).city("Msk")
         .status(PropertyStatus.AVAILABLE).postedBy(123L).createdAt(LocalDate.now())
         .updatedAt(LocalDate.now()).build();

@@ -9,13 +9,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TokenRepository extends JpaRepository<Token, Long> {
+public interface TokenRepository extends JpaRepository<Token, String> {
   @Query(value = """
       select t from Token t inner join User u\s
       on t.user.id = u.id\s
       where u.id = :id and (t.revoked = false)\s
       """)
-  List<Token> findAllValidTokenByUser(@Param("id") Long id);
+  List<Token> findAllValidTokenByUser(@Param("id") String id);
 
   @Query("select t from Token t where t.token = :token")
   Optional<Token> findTokenByValue(@Param("token") String token);

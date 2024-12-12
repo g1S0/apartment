@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 10
+                  value: "c12a7ff7-bd71-4f6a-bc1c-7468be100dc6"  # Пример UUID
               - column:
                   name: title
                   value: "Beautiful House in City Center"
@@ -42,7 +42,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 11
+                  value: "4f5aafc3-bfcf-4f77-bc9a-1f1a09e8b31f"
               - column:
                   name: title
                   value: "Luxury Apartment"
@@ -76,7 +76,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 12
+                  value: "2c9d87fa-4d55-4a91-945d-62a2f1f4e8ab"
               - column:
                   name: title
                   value: "Cozy Studio in Suburbs"
@@ -110,7 +110,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 13
+                  value: "44d90d44-d92f-4569-9e5f-8b98c3bbf53b"
               - column:
                   name: title
                   value: "Beachfront Villa"
@@ -144,7 +144,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 14
+                  value: "9d60f167-9735-4731-9b0f-f0cfd1a18eb9"
               - column:
                   name: title
                   value: "Downtown Office Space"

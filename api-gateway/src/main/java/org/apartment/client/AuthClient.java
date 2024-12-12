@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface AuthClient {
 
   @PostMapping("/api/v1/auth/validate-token")
-  Long validateToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader);
+  String validateToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader);
 }
