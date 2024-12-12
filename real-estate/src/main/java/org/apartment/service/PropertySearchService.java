@@ -21,7 +21,7 @@ public class PropertySearchService {
     this.entityManager = entityManager;
   }
 
-  public List<Property> searchProperties(PropertySearchDto propertySearchDto) {
+  public List<Property> searchProperties(PropertySearchDto propertySearchDto, int page, int size) {
     log.info("Starting search for properties with keyword: {}, price range: {} - {}, "
             + "date range: {} - {}, property type: {}, city: {}", propertySearchDto.getKeyword(),
         propertySearchDto.getMinPrice(), propertySearchDto.getMaxPrice(),
@@ -55,6 +55,6 @@ public class PropertySearchService {
       }
 
       return query;
-    }).fetchHits(100);
+    }).fetch(page * size, size).hits();
   }
 }

@@ -6,7 +6,7 @@ spring:
     name: real-estate
 
   datasource:
-    url: jdbc:postgresql://${REAL_ESTATE_DB_HOST}:${REAL_ESTATE_DB_PORT}/${REAL_ESTATE_DB_NAME}
+    url: jdbc:postgresql://${REAL_ESTATE_DB_HOST}:${HOST_REAL_ESTATE_DB_PORT}/${REAL_ESTATE_DB_NAME}
     username: ${REAL_ESTATE_USERNAME}
     password: ${REAL_ESTATE_PASSWORD}
     driver-class-name: org.postgresql.Driver
@@ -14,7 +14,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_PROTOCOL}://${EUREKA_INSTANCE_HOSTNAME}:${SERVICE_REGISTRY_SERVER_PORT}/eureka/
+      defaultZone: ${TAPART_EUREKA_PROTOCOL}://${TAPART_EUREKA_INSTANCE_HOSTNAME}:${TAPART_SERVICE_REGISTRY_SERVER_PORT}/eureka/
   instance:
     prefer-ip-address: true
 

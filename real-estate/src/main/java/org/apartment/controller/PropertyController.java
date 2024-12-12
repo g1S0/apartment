@@ -1,12 +1,12 @@
 package org.apartment.controller;
 
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import org.apartment.dto.PropertyDto;
 import org.apartment.entity.Property;
 import org.apartment.mapper.PropertyMapper;
 import org.apartment.service.PropertyService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,10 +35,8 @@ public class PropertyController {
   }
 
   @GetMapping
-  public ResponseEntity<List<PropertyDto>> getAllProperties() {
-    List<Property> properties = propertyService.getAllProperties();
-    List<PropertyDto> propertyDtos =
-        properties.stream().map(PropertyMapper.INSTANCE::toDto).toList();
-    return ResponseEntity.ok(propertyDtos);
+  public Page<PropertyDto> getProperties(@RequestParam(value = "page", defaultValue = "0") int page,
+                                      @RequestParam(value = "size", defaultValue = "10") int size) {
+    return propertyService.getProperties(page, size);
   }
 }

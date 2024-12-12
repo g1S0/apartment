@@ -4,9 +4,14 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.apartment.dto.PropertyDto;
 import org.apartment.entity.Property;
 import org.apartment.entity.PropertyImage;
+import org.apartment.mapper.PropertyMapper;
 import org.apartment.repository.PropertyRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,10 +21,13 @@ public class PropertyService {
 
   private final PropertyRepository propertyRepository;
   private final UploadService uploadService;
+  private final PropertyMapper propertyMapper;
 
-  public PropertyService(PropertyRepository propertyRepository, UploadService uploadService) {
+  public PropertyService(PropertyRepository propertyRepository, UploadService uploadService,
+                         PropertyMapper propertyMapper) {
     this.propertyRepository = propertyRepository;
     this.uploadService = uploadService;
+    this.propertyMapper = propertyMapper;
   }
 
   @Transactional
@@ -51,7 +59,11 @@ public class PropertyService {
     }
   }
 
-  public List<Property> getAllProperties() {
-    return propertyRepository.findAll();
+
+  public Page<PropertyDto> getProperties(int page, int size) {
+    Pageable pageable = PageRequest.of(page, size);
+    Page<Property> propertyPage = propertyRepository.findAll(pageable);
+
+    return propertyPage.map(propertyMapper::toDto);
   }
 }
