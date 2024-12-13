@@ -43,18 +43,12 @@ jobs:
       - name: Build global-error-handler and install locally
         run: |
           cd global-error-handler
-          mvn clean install:install-file -Dfile=target/global-error-handler-1.0-SNAPSHOT.jar \
-                                      -DgroupId=org.apartment \
-                                      -DartifactId=global-error-handler \
-                                      -Dversion=1.0-SNAPSHOT \
-                                      -Dpackaging=jar \
-                                      -DgeneratePom=true
-          
+          mvn clean install
 
       - name: Build auth and run tests with coverage
         run: |
           cd auth
-          mvn verify
+          mvn install
 
       - name: Upload Checkstyle report
         if: always()
@@ -106,17 +100,12 @@ jobs:
       - name: Build global-error-handler and install locally
         run: |
           cd global-error-handler
-          mvn clean install:install-file -Dfile=target/global-error-handler-1.0-SNAPSHOT.jar \
-                                      -DgroupId=org.apartment \
-                                      -DartifactId=global-error-handler \
-                                      -Dversion=1.0-SNAPSHOT \
-                                      -Dpackaging=jar \
-                                      -DgeneratePom=true
+          mvn clean install
 
       - name: Build real-estate and run tests with coverage
         run: |
           cd real-estate
-          mvn verify
+          mvn install
 
       - name: Upload Checkstyle report
         if: always()
