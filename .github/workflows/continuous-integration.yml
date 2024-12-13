@@ -44,11 +44,17 @@ jobs:
         run: |
           cd global-error-handler
           mvn clean install
+          mvn install:install-file -Dfile=target/global-error-handler-1.0-SNAPSHOT-global-advice.jar \
+                                   -DgroupId=org.apartment \
+                                   -DartifactId=global-error-handler \
+                                   -Dversion=1.0-SNAPSHOT \
+                                   -Dclassifier=global-advice \
+                                   -Dpackaging=jar
 
       - name: Build auth and run tests with coverage
         run: |
           cd auth
-          mvn install
+          mvn clean install -Dmaven.repo.local=$HOME/.m2/repository
 
       - name: Upload Checkstyle report
         if: always()
