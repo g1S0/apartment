@@ -43,7 +43,13 @@ jobs:
       - name: Build global-error-handler and install locally
         run: |
           cd global-error-handler
-          mvn clean install -U
+          mvn clean install:install-file -Dfile=target/global-error-handler-1.0-SNAPSHOT.jar \
+                                      -DgroupId=org.apartment \
+                                      -DartifactId=global-error-handler \
+                                      -Dversion=1.0-SNAPSHOT \
+                                      -Dpackaging=jar \
+                                      -DgeneratePom=true
+          
 
       - name: Build auth and run tests with coverage
         run: |
@@ -100,7 +106,12 @@ jobs:
       - name: Build global-error-handler and install locally
         run: |
           cd global-error-handler
-          mvn clean install -U
+          mvn clean install:install-file -Dfile=target/global-error-handler-1.0-SNAPSHOT.jar \
+                                      -DgroupId=org.apartment \
+                                      -DartifactId=global-error-handler \
+                                      -Dversion=1.0-SNAPSHOT \
+                                      -Dpackaging=jar \
+                                      -DgeneratePom=true
 
       - name: Build real-estate and run tests with coverage
         run: |
