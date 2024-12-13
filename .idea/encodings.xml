@@ -7,6 +7,8 @@
     <file url="file://$PROJECT_DIR$/auth/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/email-notification/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/email-notification/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/global-error-handler/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/global-error-handler/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/real-estate/email-notification/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/real-estate/email-notification/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/real-estate/src/main/java" charset="UTF-8" />
@@ -15,5 +17,7 @@
     <file url="file://$PROJECT_DIR$/service-registry/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/untitled/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/untitled/src/main/resources" charset="UTF-8" />
   </component>
 </project>
