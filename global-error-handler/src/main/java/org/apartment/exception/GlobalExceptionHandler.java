@@ -10,7 +10,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 public abstract class GlobalExceptionHandler {
@@ -28,7 +27,6 @@ public abstract class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
-  @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ResponseEntity<ResponseDto<String>> handleConstraintViolationException(
       ConstraintViolationException ex) {
     ResponseDto<String> response = new ResponseDto<>("Constraint violation: " + ex.getMessage());
