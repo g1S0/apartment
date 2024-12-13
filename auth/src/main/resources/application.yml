@@ -11,9 +11,6 @@ spring:
     password: ${USER_DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
-
 application:
   security:
     jwt:
