@@ -104,8 +104,9 @@ jobs:
 
       - name: Build real-estate and run tests with coverage
         run: |
+          export MAVEN_OPTS="-Dmaven.repo.local=$HOME/.m2/repository"
           cd real-estate
-          mvn install
+          mvn clean install
 
       - name: Upload Checkstyle report
         if: always()
