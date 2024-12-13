@@ -100,11 +100,10 @@ jobs:
       - name: Build global-error-handler and install locally
         run: |
           cd global-error-handler
-          mvn clean install
+          mvn clean install:install-file
 
       - name: Build real-estate and run tests with coverage
         run: |
-          export MAVEN_OPTS="-Dmaven.repo.local=$HOME/.m2/repository"
           cd real-estate
           mvn clean install
 
