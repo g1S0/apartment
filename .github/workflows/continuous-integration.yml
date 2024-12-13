@@ -43,12 +43,12 @@ jobs:
       - name: Build global-error-handler and install locally
         run: |
           cd global-error-handler
-          mvn clean install
+          mvn clean install -U
 
       - name: Build auth and run tests with coverage
         run: |
           cd auth
-          mvn clean verify
+          mvn verify
 
       - name: Upload Checkstyle report
         if: always()
@@ -100,12 +100,12 @@ jobs:
       - name: Build global-error-handler and install locally
         run: |
           cd global-error-handler
-          mvn clean install
+          mvn clean install -U
 
       - name: Build real-estate and run tests with coverage
         run: |
           cd real-estate
-          mvn clean verify
+          mvn verify
 
       - name: Upload Checkstyle report
         if: always()
