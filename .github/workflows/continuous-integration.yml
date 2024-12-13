@@ -33,11 +33,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
+
+      - name: Build global-error-handler and install locally
+        run: |
+          cd global-error-handler
+          mvn clean install
+
       - name: Build auth and run tests with coverage
         run: |
           cd auth
@@ -89,6 +96,12 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+
+      - name: Build global-error-handler and install locally
+        run: |
+          cd global-error-handler
+          mvn clean install
+
       - name: Build real-estate and run tests with coverage
         run: |
           cd real-estate
