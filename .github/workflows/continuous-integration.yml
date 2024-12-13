@@ -100,12 +100,13 @@ jobs:
       - name: Build global-error-handler and install locally
         run: |
           cd global-error-handler
+          mvn clean install
           mvn install:install-file -Dfile=target/global-error-handler-1.0-SNAPSHOT-global-advice.jar \
-                        -DgroupId=org.apartment \
-                        -DartifactId=global-error-handler \
-                        -Dversion=1.0-SNAPSHOT \
-                        -Dclassifier=global-advice \
-                        -Dpackaging=jar
+                                   -DgroupId=org.apartment \
+                                   -DartifactId=global-error-handler \
+                                   -Dversion=1.0-SNAPSHOT \
+                                   -Dclassifier=global-advice \
+                                   -Dpackaging=jar
 
       - name: Build real-estate and run tests with coverage
         run: |
