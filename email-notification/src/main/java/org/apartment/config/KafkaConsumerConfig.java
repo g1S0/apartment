@@ -20,12 +20,16 @@ public class KafkaConsumerConfig {
 
   @Bean
   public ConsumerFactory<String, String> consumerFactory() {
-    Map<String, Object> props = new HashMap<>();
-    props.put(ConsumerConfig.GROUP_ID_CONFIG, "email_group");
-    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-    return new DefaultKafkaConsumerFactory<>(props);
+    Map<String, Object> configProps = new HashMap<>();
+    configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+    configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+    configProps.put(ConsumerConfig.GROUP_ID_CONFIG, "email_group");
+    configProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+    configProps.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
+    configProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+
+    return new DefaultKafkaConsumerFactory<>(configProps);
   }
 
   @Bean
