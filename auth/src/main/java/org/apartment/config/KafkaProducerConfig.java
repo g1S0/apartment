@@ -14,7 +14,7 @@ import org.springframework.kafka.core.ProducerFactory;
 
 @Configuration
 public class KafkaProducerConfig {
-  @Value("${spring.kafka.bootstrap-servers}")
+  @Value("${kafka-bootstrap-servers}")
   private String bootstrapServers;
 
   @Bean
@@ -23,6 +23,11 @@ public class KafkaProducerConfig {
     configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
     configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+    configProps.put(ProducerConfig.ACKS_CONFIG, "all");
+    configProps.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, "30000");
+    configProps.put(ProducerConfig.RETRIES_CONFIG, 3);
+    configProps.put(ProducerConfig.LINGER_MS_CONFIG, 5);
+
     return new DefaultKafkaProducerFactory<>(configProps);
   }
 
