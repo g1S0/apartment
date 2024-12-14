@@ -25,3 +25,5 @@ aws:
     region: ${REAL_ESTATE_AWS_S3_REGION}
     endpoint: ${REAL_ESTATE_AWS_S3_ENDPOINT}
     bucket-name: ${REAL_ESTATE_AWS_S3_BUCKET_NAME}
+
+kafka-bootstrap-servers: ${NOTIFICATION_KAFKA_BOOTSTRAP_SERVERS}
