@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/users")
 public class UserController {
 
-  private final UserService service;
+  private final UserService userService;
 
   public UserController(UserService service) {
-    this.service = service;
+    this.userService = service;
   }
 
   @PutMapping
   public ResponseEntity<Void> changePassword(@RequestBody @Valid ChangePasswordDto request,
                                              Principal connectedUser) {
-    service.changePassword(request, connectedUser);
+    userService.changePassword(request, connectedUser);
     return ResponseEntity.ok().build();
   }
 }
