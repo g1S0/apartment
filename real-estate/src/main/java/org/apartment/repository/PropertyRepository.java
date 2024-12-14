@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PropertyRepository
-    extends JpaRepository<Property, Long>, PagingAndSortingRepository<Property, Long> {
+    extends JpaRepository<Property, String>, PagingAndSortingRepository<Property, String> {
 }
