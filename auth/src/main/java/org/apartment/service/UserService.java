@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
   private final PasswordEncoder passwordEncoder;
-  private final UserRepository repository;
+  private final UserRepository userRepository;
 
   public void changePassword(ChangePasswordDto request, Principal connectedUser) {
     var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
@@ -36,7 +36,7 @@ public class UserService {
     }
 
     user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-    repository.save(user);
+    userRepository.save(user);
     log.info("Password successfully changed for user: {}", user.getEmail());
   }
 }
