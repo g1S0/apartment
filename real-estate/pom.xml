@@ -73,7 +73,6 @@
             <groupId>org.apartment</groupId>
             <artifactId>global-error-handler</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <classifier>global-advice</classifier>
         </dependency>
         <dependency>
             <groupId>org.springframework.kafka</groupId>
