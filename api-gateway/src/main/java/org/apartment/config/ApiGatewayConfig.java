@@ -22,7 +22,9 @@ public class ApiGatewayConfig {
         .route("auth-refresh-token", r -> r.path("/api/v1/auth/refresh-token").uri("lb://auth"))
 
         // /api/v1/users
-        .route("users", r -> r.path("/api/v1/users").uri("lb://auth"))
+        .route("users", r -> r.path("/api/v1/users").and().method(HttpMethod.PUT).uri("lb://auth"))
+        .route("auth-delete-user",
+            r -> r.path("/api/v1/users").and().method(HttpMethod.DELETE).uri("lb://auth"))
 
         // POST /api/v1/property
         .route("property-post", r -> r.path("/api/v1/property").and().method(HttpMethod.POST)

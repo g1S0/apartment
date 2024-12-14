@@ -8,10 +8,12 @@ import org.apartment.dto.PropertyDto;
 import org.apartment.entity.Property;
 import org.apartment.entity.PropertyImage;
 import org.apartment.mapper.PropertyMapper;
+import org.apartment.repository.PropertyImageRepository;
 import org.apartment.repository.PropertyRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,12 +22,15 @@ import org.springframework.web.multipart.MultipartFile;
 public class PropertyService {
 
   private final PropertyRepository propertyRepository;
+  private final PropertyImageRepository propertyImageRepository;
   private final UploadService uploadService;
   private final PropertyMapper propertyMapper;
 
-  public PropertyService(PropertyRepository propertyRepository, UploadService uploadService,
-                         PropertyMapper propertyMapper) {
+  public PropertyService(PropertyRepository propertyRepository,
+                         PropertyImageRepository propertyImageRepository,
+                         UploadService uploadService, PropertyMapper propertyMapper) {
     this.propertyRepository = propertyRepository;
+    this.propertyImageRepository = propertyImageRepository;
     this.uploadService = uploadService;
     this.propertyMapper = propertyMapper;
   }
@@ -59,6 +64,12 @@ public class PropertyService {
     }
   }
 
+  @Transactional
+  @KafkaListener(topics = "account_data_delete", groupId = "clear_user_data")
+  public void deleteProperty(String userId) {
+    propertyImageRepository.deleteByUserId(userId);
+    propertyRepository.deleteByUserId(userId);
+  }
 
   public Page<PropertyDto> getProperties(int page, int size) {
     Pageable pageable = PageRequest.of(page, size);
