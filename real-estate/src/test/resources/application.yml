@@ -22,3 +22,5 @@ aws:
     region: us-east-1
     endpoint: http://localhost:4566
     bucket-name: test-bucket
+
+kafka-bootstrap-servers: localhost:9092
