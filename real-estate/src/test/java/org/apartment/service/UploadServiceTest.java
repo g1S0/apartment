@@ -40,6 +40,7 @@ class UploadServiceTest {
   private MultipartFile file;
 
   private UploadService uploadService;
+  private FileValidationService fileValidationService;
 
   private final String s3StorageEndpoint = "http://localhost:9000";
   private final String bucketName = "test-bucket";
@@ -47,7 +48,8 @@ class UploadServiceTest {
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
-    uploadService = spy(new UploadService(s3Client, s3StorageEndpoint, bucketName));
+    fileValidationService = spy(new FileValidationService());
+    uploadService = spy(new UploadService(s3Client, s3StorageEndpoint, bucketName, fileValidationService));
   }
 
   @Test
@@ -59,7 +61,7 @@ class UploadServiceTest {
     when(file.getInputStream()).thenReturn(new java.io.ByteArrayInputStream(content));
     when(file.getSize()).thenReturn((long) content.length);
 
-    doNothing().when(uploadService).validateFiles(any(MultipartFile[].class));
+    doNothing().when(fileValidationService).validateFiles(any(MultipartFile[].class));
 
     when(s3Client.putObject(any(PutObjectRequest.class), any(RequestBody.class))).thenReturn(null);
 
@@ -67,7 +69,7 @@ class UploadServiceTest {
 
     assertNotNull(result);
     assertEquals(1, result.size());
-    assertTrue(result.get(0).contains(bucketName));
+    assertTrue(result.getFirst().contains(bucketName));
   }
 
   @Test

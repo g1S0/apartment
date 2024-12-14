@@ -1,23 +1,12 @@
 package org.apartment.service;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
-import org.apartment.exception.FileCountExceededException;
-import org.apartment.exception.FileReadException;
-import org.apartment.exception.FileSizeExceededException;
-import org.apartment.exception.FileValidationException;
-import org.apartment.exception.InvalidFileExtensionException;
-import org.apartment.exception.InvalidFileNameException;
-import org.apartment.exception.InvalidImageFileException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,23 +21,24 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 @Service
 @Slf4j
 public class UploadService {
-  private static final Set<String> ALLOWED_EXTENSIONS = Set.of("jpg", "jpeg");
-  private static final int MAX_FILES = 3;
   private final S3Client s3Client;
   private final String s3StorageEndpoint;
   private final String bucketName;
+  private final FileValidationService fileValidationService;
 
   @Autowired
   public UploadService(S3Client s3Client, @Value("${aws.s3.endpoint}") String s3StorageEndpoint,
-                       @Value("${aws.s3.bucket-name}") String bucketName) {
+                       @Value("${aws.s3.bucket-name}") String bucketName,
+                       FileValidationService fileValidationService) {
     this.s3Client = s3Client;
     this.s3StorageEndpoint = s3StorageEndpoint;
     this.bucketName = bucketName;
+    this.fileValidationService = fileValidationService;
   }
 
   public List<String> uploadFiles(MultipartFile[] files) {
     log.info("Starting file upload. Total files to upload: {}", files.length);
-    validateFiles(files);
+    fileValidationService.validateFiles(files);
     log.info("File validation completed successfully.");
 
     List<CompletableFuture<String>> uploadFutures =
@@ -107,39 +97,5 @@ public class UploadService {
 
   private String extractKeyFromUrl(String url) {
     return url.substring(url.lastIndexOf("/") + 1);
-  }
-
-  void validateFiles(MultipartFile[] files) throws FileValidationException {
-    if (files.length > MAX_FILES) {
-      throw new FileCountExceededException("Maximum amount of files exceeded");
-    }
-
-    for (MultipartFile file : files) {
-      String originalFileName = file.getOriginalFilename();
-      final long maxFileSize = 5 * 1024 * 1024; // 5 MB
-
-      try {
-        BufferedImage image = ImageIO.read(file.getInputStream());
-        if (image == null) {
-          throw new InvalidImageFileException("Invalid image file");
-        }
-      } catch (IOException e) {
-        throw new FileReadException("Error reading the image file");
-      }
-
-      if (originalFileName == null || originalFileName.isEmpty()) {
-        throw new InvalidFileNameException("File name should be valid");
-      }
-
-      String fileExtension =
-          originalFileName.substring(originalFileName.lastIndexOf('.') + 1).toLowerCase();
-      if (!ALLOWED_EXTENSIONS.contains(fileExtension)) {
-        throw new InvalidFileExtensionException("Only JPG and JPEG formats are allowed");
-      }
-
-      if (file.getSize() > maxFileSize) {
-        throw new FileSizeExceededException("File size exceeds the maximum allowed size of 5 MB");
-      }
-    }
   }
 }
