@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -25,14 +26,17 @@ public class PropertyService {
   private final PropertyImageRepository propertyImageRepository;
   private final UploadService uploadService;
   private final PropertyMapper propertyMapper;
+  private final TransactionTemplate transactionTemplate;
 
   public PropertyService(PropertyRepository propertyRepository,
                          PropertyImageRepository propertyImageRepository,
-                         UploadService uploadService, PropertyMapper propertyMapper) {
+                         UploadService uploadService, PropertyMapper propertyMapper,
+                         TransactionTemplate transactionTemplate) {
     this.propertyRepository = propertyRepository;
     this.propertyImageRepository = propertyImageRepository;
     this.uploadService = uploadService;
     this.propertyMapper = propertyMapper;
+    this.transactionTemplate = transactionTemplate;
   }
 
   @Transactional
@@ -64,11 +68,16 @@ public class PropertyService {
     }
   }
 
-  @Transactional
   @KafkaListener(topics = "account_data_delete", groupId = "clear_user_data")
   public void deleteProperty(String userId) {
-    propertyImageRepository.deleteByUserId(userId);
-    propertyRepository.deleteByUserId(userId);
+    List<String> imageUrls = transactionTemplate.execute(status -> {
+      List<String> urls = propertyImageRepository.findImageUrlsByUserId(userId);
+      propertyImageRepository.deleteByUserId(userId);
+      propertyRepository.deleteByUserId(userId);
+      return urls;
+    });
+
+    uploadService.deleteFiles(imageUrls);
   }
 
   public Page<PropertyDto> getProperties(int page, int size) {

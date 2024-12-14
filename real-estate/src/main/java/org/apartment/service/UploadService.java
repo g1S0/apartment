@@ -24,6 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.Delete;
+import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
+import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
@@ -86,6 +89,24 @@ public class UploadService {
 
     log.info("Returning file URLs: {}", fileUrls);
     return fileUrls;
+  }
+
+  public void deleteFiles(List<String> imageUrls) {
+    if (imageUrls == null || imageUrls.isEmpty()) {
+      return;
+    }
+
+    List<ObjectIdentifier> objectsToDelete = imageUrls.stream().map(this::extractKeyFromUrl)
+        .map(key -> ObjectIdentifier.builder().key(key).build()).collect(Collectors.toList());
+
+    DeleteObjectsRequest deleteObjectsRequest = DeleteObjectsRequest.builder().bucket(bucketName)
+        .delete(Delete.builder().objects(objectsToDelete).build()).build();
+
+    s3Client.deleteObjects(deleteObjectsRequest);
+  }
+
+  private String extractKeyFromUrl(String url) {
+    return url.substring(url.lastIndexOf("/") + 1);
   }
 
   void validateFiles(MultipartFile[] files) throws FileValidationException {
