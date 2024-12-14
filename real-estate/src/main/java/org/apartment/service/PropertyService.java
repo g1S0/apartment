@@ -3,6 +3,7 @@ package org.apartment.service;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apartment.dto.PropertyDto;
 import org.apartment.entity.Property;
@@ -19,6 +20,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@AllArgsConstructor
 @Slf4j
 public class PropertyService {
 
@@ -27,17 +29,6 @@ public class PropertyService {
   private final UploadService uploadService;
   private final PropertyMapper propertyMapper;
   private final TransactionTemplate transactionTemplate;
-
-  public PropertyService(PropertyRepository propertyRepository,
-                         PropertyImageRepository propertyImageRepository,
-                         UploadService uploadService, PropertyMapper propertyMapper,
-                         TransactionTemplate transactionTemplate) {
-    this.propertyRepository = propertyRepository;
-    this.propertyImageRepository = propertyImageRepository;
-    this.uploadService = uploadService;
-    this.propertyMapper = propertyMapper;
-    this.transactionTemplate = transactionTemplate;
-  }
 
   @Transactional
   public Property createProperty(Property property, MultipartFile[] imageFiles) {

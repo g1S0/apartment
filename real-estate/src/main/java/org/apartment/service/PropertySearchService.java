@@ -2,6 +2,7 @@ package org.apartment.service;
 
 import jakarta.persistence.EntityManager;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apartment.dto.PropertySearchDto;
 import org.apartment.entity.Property;
@@ -12,14 +13,11 @@ import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 @Slf4j
 public class PropertySearchService {
 
   private final EntityManager entityManager;
-
-  public PropertySearchService(EntityManager entityManager) {
-    this.entityManager = entityManager;
-  }
 
   public List<Property> searchProperties(PropertySearchDto propertySearchDto, int page, int size) {
     log.info("Starting search for properties with keyword: {}, price range: {} - {}, "
