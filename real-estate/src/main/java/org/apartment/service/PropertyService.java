@@ -31,7 +31,7 @@ public class PropertyService {
   }
 
   @Transactional
-  public Property createProperty(Property property, MultipartFile[] imageFiles) throws Exception {
+  public Property createProperty(Property property, MultipartFile[] imageFiles) {
     log.info("Starting the property creation process for property with title: {}",
         property.getTitle());
 
