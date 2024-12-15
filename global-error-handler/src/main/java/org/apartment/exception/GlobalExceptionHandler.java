@@ -25,7 +25,7 @@ public abstract class GlobalExceptionHandler {
       errors.put(fieldName, errorMessage);
     });
     ResponseDto<Map<String, String>> response = new ResponseDto<>(errors);
-    log.error("Exception: {}", e.getMessage(), e);
+    log.info("Validation: {}", e.getMessage(), e);
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 
@@ -33,7 +33,7 @@ public abstract class GlobalExceptionHandler {
   public ResponseEntity<ResponseDto<String>> handleConstraintViolationException(
       ConstraintViolationException e) {
     ResponseDto<String> response = new ResponseDto<>("Constraint violation: " + e.getMessage());
-    log.error("Exception: {}", e.getMessage(), e);
+    log.info("Constraint violation: {}", e.getMessage(), e);
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 
