@@ -1,5 +1,6 @@
 package org.apartment.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apartment.client.AuthClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -14,6 +15,7 @@ import reactor.core.publisher.Mono;
 
 
 @Component
+@Slf4j
 public class CustomGatewayFilter implements GatewayFilter {
 
   private final AuthClient authClient;
@@ -27,16 +29,32 @@ public class CustomGatewayFilter implements GatewayFilter {
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
     String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+
+    if (authHeader == null) {
+      log.warn("Authorization header is missing");
       exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
       return exchange.getResponse().setComplete();
     }
 
-    return Mono.fromCallable(() -> authClient.validateToken(authHeader)).flatMap(userInfo -> {
-      ServerHttpRequest mutatedRequest =
-          exchange.getRequest().mutate().header("X-User-Id", userInfo).build();
+    if (!authHeader.startsWith("Bearer ")) {
+      log.warn("Authorization header does not start with Bearer");
+      exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+      return exchange.getResponse().setComplete();
+    }
 
-      return chain.filter(exchange.mutate().request(mutatedRequest).build());
-    });
+    log.info("Authorization header found, validating token");
+
+    return Mono.fromCallable(() -> authClient.validateToken(authHeader))
+        .flatMap(userInfo -> {
+          log.info("Token validated successfully for user: {}", userInfo);
+
+          ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
+              .header("X-User-Id", userInfo)
+              .build();
+
+          log.info("Passing mutated request to the next filter");
+          return chain.filter(exchange.mutate().request(mutatedRequest).build());
+        })
+        .doOnError(ex -> log.error("Error occurred during token validation", ex));  // Логирование ошибок
   }
 }
