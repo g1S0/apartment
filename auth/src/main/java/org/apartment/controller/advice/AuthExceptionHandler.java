@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
 public class AuthExceptionHandler extends GlobalExceptionHandler {
@@ -49,6 +50,13 @@ public class AuthExceptionHandler extends GlobalExceptionHandler {
 
   @ExceptionHandler(BadCredentialsException.class)
   public ResponseEntity<String> handleBadCredentialsException(BadCredentialsException ex) {
-    return new ResponseEntity<>("Invalid username or password", HttpStatus.UNAUTHORIZED);
+    return new ResponseEntity<>("Invalid user data", HttpStatus.UNAUTHORIZED);
+  }
+
+  @ExceptionHandler(ResponseStatusException.class)
+  public ResponseEntity<ResponseDto<String>> handleResponseStatusException(
+      ResponseStatusException ex) {
+    ResponseDto<String> response = new ResponseDto<>(ex.getReason());
+    return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
   }
 }
