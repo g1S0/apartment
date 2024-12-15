@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: "c12a7ff7-bd71-4f6a-bc1c-7468be100dc6"  # Пример UUID
+                  value: "c12a7ff7-bd71-4f6a-bc1c-7468be100dc6"
               - column:
                   name: title
                   value: "Beautiful House in City Center"
@@ -36,6 +36,9 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   valueDate: "2024-12-11"
+              - column:
+                  name: property_deal_type
+                  value: "RENT"
 
         - insert:
             tableName: property
@@ -70,6 +73,9 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   valueDate: "2024-12-11"
+              - column:
+                  name: property_deal_type
+                  value: "SALE"
 
         - insert:
             tableName: property
@@ -104,6 +110,9 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   valueDate: "2024-12-11"
+              - column:
+                  name: property_deal_type
+                  value: "RENT"
 
         - insert:
             tableName: property
@@ -138,6 +147,9 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   valueDate: "2024-12-11"
+              - column:
+                  name: property_deal_type
+                  value: "SALE"
 
         - insert:
             tableName: property
@@ -172,3 +184,6 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   valueDate: "2024-12-11"
+              - column:
+                  name: property_deal_type
+                  value: "SALE"
