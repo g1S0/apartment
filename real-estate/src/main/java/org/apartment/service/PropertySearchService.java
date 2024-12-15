@@ -27,24 +27,26 @@ public class PropertySearchService {
         propertySearchDto.getEndDate(), propertySearchDto.getPropertyType(),
         propertySearchDto.getCity(), propertySearchDto.getPropertyDealType());
 
+    long startTime = System.currentTimeMillis();
+    log.info("Search started at: {}", startTime);
+
     SearchSession searchSession = Search.session(entityManager);
 
-    return searchSession.search(Property.class).where(f -> {
+    List<Property> properties = searchSession.search(Property.class).where(f -> {
       BooleanPredicateClausesStep<?> query = f.bool().must(f.range().field("price")
-          .between(propertySearchDto.getMinPrice(), propertySearchDto.getMaxPrice())).must(
-          f.range().field("createdAt")
+              .between(propertySearchDto.getMinPrice(), propertySearchDto.getMaxPrice()))
+          .must(f.range().field("createdAt")
               .between(propertySearchDto.getStartDate(), propertySearchDto.getEndDate()));
 
       if (!propertySearchDto.getKeyword().isEmpty()) {
-        query.must(
-            f.match().fields("title", "description").matching(propertySearchDto.getKeyword()));
+        query.must(f.match().fields("title", "description").matching(propertySearchDto.getKeyword()));
       }
 
       if (!propertySearchDto.getCity().isEmpty()) {
         query.must(f.match().fields("city").matching(propertySearchDto.getCity()));
       }
 
-      if (!propertySearchDto.getStatus().isEmpty()) {
+      if (propertySearchDto.getStatus() != null && !propertySearchDto.getStatus().isEmpty()) {
         query.must(f.match().fields("status")
             .matching(PropertyStatus.valueOf(propertySearchDto.getStatus().toUpperCase())));
       }
@@ -54,11 +56,15 @@ public class PropertySearchService {
       }
 
       if (propertySearchDto.getPropertyDealType() != null) {
-        query.must(
-            f.match().field("propertyDealType").matching(propertySearchDto.getPropertyDealType()));
+        query.must(f.match().field("propertyDealType").matching(propertySearchDto.getPropertyDealType()));
       }
 
       return query;
     }).fetch(page * size, size).hits();
+
+    long endTime = System.currentTimeMillis();
+    log.info("Search completed at: {}, Total time: {} ms", endTime, endTime - startTime);
+
+    return properties;
   }
 }

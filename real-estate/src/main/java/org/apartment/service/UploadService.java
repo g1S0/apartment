@@ -83,16 +83,26 @@ public class UploadService {
 
   public void deleteFiles(List<String> imageUrls) {
     if (imageUrls == null || imageUrls.isEmpty()) {
+      log.warn("No image URLs provided for deletion.");
       return;
     }
 
-    List<ObjectIdentifier> objectsToDelete = imageUrls.stream().map(this::extractKeyFromUrl)
-        .map(key -> ObjectIdentifier.builder().key(key).build()).collect(Collectors.toList());
+    log.info("Preparing to delete {} images from S3.", imageUrls.size());
 
-    DeleteObjectsRequest deleteObjectsRequest = DeleteObjectsRequest.builder().bucket(bucketName)
-        .delete(Delete.builder().objects(objectsToDelete).build()).build();
+    List<ObjectIdentifier> objectsToDelete = imageUrls.stream()
+        .map(this::extractKeyFromUrl)
+        .map(key -> ObjectIdentifier.builder().key(key).build())
+        .collect(Collectors.toList());
+
+    log.info("Generated {} objects to delete from S3.", objectsToDelete.size());
+
+    DeleteObjectsRequest deleteObjectsRequest = DeleteObjectsRequest.builder()
+        .bucket(bucketName)
+        .delete(Delete.builder().objects(objectsToDelete).build())
+        .build();
 
     s3Client.deleteObjects(deleteObjectsRequest);
+    log.info("Successfully requested deletion of {} objects from S3.", objectsToDelete.size());
   }
 
   private String extractKeyFromUrl(String url) {

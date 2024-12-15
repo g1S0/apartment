@@ -35,33 +35,31 @@ public class PropertyService {
     log.info("Starting the property creation process for property with title: {}",
         property.getTitle());
 
-    try {
-      log.info("Uploading images...");
-      List<String> imageUrls = uploadService.uploadFiles(imageFiles);
-      log.info("Images uploaded successfully. Number of images: {}", imageUrls.size());
+    log.info("Uploading images...");
+    List<String> imageUrls = uploadService.uploadFiles(imageFiles);
+    log.info("Images uploaded successfully. Number of images: {}", imageUrls.size());
 
-      log.info("Mapping image URLs to PropertyImage entities...");
-      List<PropertyImage> propertyImages = imageUrls.stream()
-          .map(imageUrl -> PropertyImage.builder().imageUrl(imageUrl).property(property).build())
-          .collect(Collectors.toList());
-      log.info("Mapped {} image URLs to PropertyImage entities.", propertyImages.size());
+    log.info("Mapping image URLs to PropertyImage entities...");
+    List<PropertyImage> propertyImages = imageUrls.stream()
+        .map(imageUrl -> PropertyImage.builder().imageUrl(imageUrl).property(property).build())
+        .collect(Collectors.toList());
+    log.info("Mapped {} image URLs to PropertyImage entities.", propertyImages.size());
 
-      property.setImages(propertyImages);
-      log.info("Property images set successfully.");
+    property.setImages(propertyImages);
+    log.info("Property images set successfully.");
 
-      Property savedProperty = propertyRepository.save(property);
-      log.info("Property with ID {} created successfully.", savedProperty.getId());
+    Property savedProperty = propertyRepository.save(property);
+    log.info("Property with ID {} created successfully.", savedProperty.getId());
 
-      return savedProperty;
-    } catch (Exception e) {
-      log.error("Error occurred while creating property with title: {}", property.getTitle(), e);
-      throw e;
-    }
+    return savedProperty;
   }
 
   @KafkaListener(topics = "account_data_delete", groupId = "clear_user_data")
   public void deleteProperty(String userId) {
+    log.info("Received request to delete data for userId: {}", userId);
+
     List<String> imageUrls = transactionTemplate.execute(status -> {
+      log.info("Deleting property and images for userId: {}", userId);
       List<String> urls = propertyImageRepository.findImageUrlsByUserId(userId);
       propertyImageRepository.deleteByUserId(userId);
       propertyRepository.deleteByUserId(userId);
@@ -69,11 +67,16 @@ public class PropertyService {
     });
 
     uploadService.deleteFiles(imageUrls);
+    log.info("Successfully deleted files for userId: {}", userId);
   }
 
   public Page<PropertyDto> getProperties(int page, int size) {
+    log.info("Fetching properties, page: {}, size: {}", page, size);
+
     Pageable pageable = PageRequest.of(page, size);
     Page<Property> propertyPage = propertyRepository.findAll(pageable);
+
+    log.info("Found {} properties on page {}.", propertyPage.getTotalElements(), page);
 
     return propertyPage.map(propertyMapper::toDto);
   }
