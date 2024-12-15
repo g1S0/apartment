@@ -24,22 +24,22 @@ public class LogoutService implements LogoutHandler {
                      Authentication authentication) {
     final String authHeader = request.getHeader("Authorization");
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-      log.warn("Missing or invalid Authorization header in logout request");
+      log.info("Missing or invalid Authorization header in logout request");
       throw new InvalidAuthorizationHeaderException("Authorization header is missing or invalid");
     }
 
     String jwt = authHeader.substring(7);
-    log.debug("Processing logout for token: {}", jwt);
+    log.info("Processing logout for token: {}", jwt);
 
     var storedToken = tokenRepository.findTokenByValue(jwt).orElse(null);
     if (storedToken != null) {
-      log.debug("Revoking and expiring token: {}", jwt);
+      log.info("Revoking and expiring token: {}", jwt);
       storedToken.setRevoked(true);
       tokenRepository.save(storedToken);
       SecurityContextHolder.clearContext();
       log.info("Successfully logged out user with token: {}", jwt);
     } else {
-      log.warn("Token not found: {}", jwt);
+      log.info("Token not found: {}", jwt);
     }
   }
 }

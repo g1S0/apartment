@@ -35,7 +35,7 @@ public class AuthService {
 
   @Transactional
   public AccessRefreshTokensDto register(User user) {
-    log.debug("Registering user with email: {}", user.getEmail());
+    log.info("Registering user with email: {}", user.getEmail());
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     var savedUser = userRepository.save(user);
     var jwtToken = jwtService.generateToken(user, user.getId());
@@ -50,7 +50,7 @@ public class AuthService {
 
   @Transactional
   public AccessRefreshTokensDto authenticate(LoginDto request) {
-    log.debug("Authenticating user with email: {}", request.getEmail());
+    log.info("Authenticating user with email: {}", request.getEmail());
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
     var user = userRepository.findByEmail(request.getEmail())
@@ -65,13 +65,13 @@ public class AuthService {
   }
 
   private void saveUserToken(User user, String jwtToken) {
-    log.debug("Saving token for user: {}", user.getEmail());
+    log.info("Saving token for user: {}", user.getEmail());
     var token = Token.builder().user(user).token(jwtToken).revoked(false).build();
     tokenRepository.save(token);
   }
 
   private void revokeAllUserTokens(User user) {
-    log.debug("Revoking all tokens for user: {}", user.getEmail());
+    log.info("Revoking all tokens for user: {}", user.getEmail());
     var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
     if (validUserTokens.isEmpty()) {
       return;
@@ -81,7 +81,7 @@ public class AuthService {
   }
 
   public AccessRefreshTokensDto refreshToken(HttpServletRequest request) {
-    log.debug("Refreshing token");
+    log.info("Refreshing token");
     final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
@@ -104,11 +104,11 @@ public class AuthService {
         return AccessRefreshTokensDto.builder().accessToken(accessToken).refreshToken(refreshToken)
             .build();
       } else {
-        log.error("Invalid refresh token for user: {}", userEmail);
+        log.info("Invalid refresh token for user: {}", userEmail);
         throw new BadCredentialsException("Invalid refresh token");
       }
     } else {
-      log.error("Invalid refresh token");
+      log.info("Invalid refresh token");
       throw new BadCredentialsException("Invalid refresh token");
     }
   }
