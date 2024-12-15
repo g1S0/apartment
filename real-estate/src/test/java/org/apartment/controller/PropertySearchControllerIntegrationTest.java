@@ -13,6 +13,7 @@ import java.util.UUID;
 import org.apartment.dto.PropertyDto;
 import org.apartment.dto.PropertySearchDto;
 import org.apartment.entity.Property;
+import org.apartment.entity.PropertyDealType;
 import org.apartment.entity.PropertyStatus;
 import org.apartment.entity.PropertyType;
 import org.apartment.repository.PropertyRepository;
@@ -177,11 +178,32 @@ public class PropertySearchControllerIntegrationTest {
   }
 
   @Test
+  public void testSearchPropertiesByDealTypeUsingDto() throws Exception {
+    PropertySearchDto searchDto =
+        PropertySearchDto.builder().propertyDealType(PropertyDealType.RENT).build();
+
+    String json = objectMapper.writeValueAsString(searchDto);
+
+    String response =
+        mockMvc.perform(get(API_URL).contentType(MediaType.APPLICATION_JSON).content(json))
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+    List<PropertyDto> properties = objectMapper.readValue(response,
+        objectMapper.getTypeFactory().constructCollectionType(List.class, PropertyDto.class));
+    for (PropertyDto propertyDto : properties) {
+      System.out.println(propertyDto);
+    }
+    Assertions.assertTrue(
+        properties.stream().allMatch(p -> p.getPropertyDealType().equals(PropertyDealType.RENT)));
+  }
+
+  @Test
   public void testSearchPropertiesAfterPropertySave() throws Exception {
-    Property property = Property.builder().title("Modern Apartment")
-        .description("Luxury apartment with stunning views and modern amenities.")
-        .type(PropertyType.CONDO).price(BigDecimal.valueOf(600000)).city("Los Angeles")
-        .status(PropertyStatus.AVAILABLE).postedBy(UUID.randomUUID().toString()).build();
+    Property property =
+        Property.builder().title("Modern Apartment").propertyDealType(PropertyDealType.RENT)
+            .description("Luxury apartment with stunning views and modern amenities.")
+            .type(PropertyType.CONDO).price(BigDecimal.valueOf(600000)).city("Los Angeles")
+            .status(PropertyStatus.AVAILABLE).postedBy(UUID.randomUUID().toString()).build();
 
     propertyRepository.save(property);
 

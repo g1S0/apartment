@@ -21,10 +21,11 @@ public class PropertySearchService {
 
   public List<Property> searchProperties(PropertySearchDto propertySearchDto, int page, int size) {
     log.info("Starting search for properties with keyword: {}, price range: {} - {}, "
-            + "date range: {} - {}, property type: {}, city: {}", propertySearchDto.getKeyword(),
-        propertySearchDto.getMinPrice(), propertySearchDto.getMaxPrice(),
-        propertySearchDto.getStartDate(), propertySearchDto.getEndDate(),
-        propertySearchDto.getPropertyType(), propertySearchDto.getCity());
+            + "date range: {} - {}, property type: {}, city: {}, deal type: {}",
+        propertySearchDto.getKeyword(), propertySearchDto.getMinPrice(),
+        propertySearchDto.getMaxPrice(), propertySearchDto.getStartDate(),
+        propertySearchDto.getEndDate(), propertySearchDto.getPropertyType(),
+        propertySearchDto.getCity(), propertySearchDto.getPropertyDealType());
 
     SearchSession searchSession = Search.session(entityManager);
 
@@ -50,6 +51,11 @@ public class PropertySearchService {
 
       if (propertySearchDto.getPropertyType() != null) {
         query.must(f.match().field("type").matching(propertySearchDto.getPropertyType()));
+      }
+
+      if (propertySearchDto.getPropertyDealType() != null) {
+        query.must(
+            f.match().field("propertyDealType").matching(propertySearchDto.getPropertyDealType()));
       }
 
       return query;

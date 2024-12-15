@@ -49,6 +49,11 @@ public class Property {
   @GenericField
   private PropertyType type;
 
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  @GenericField
+  private PropertyDealType propertyDealType;
+
   @Column(nullable = false)
   @GenericField
   private BigDecimal price;

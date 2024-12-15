@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apartment.entity.PropertyDealType;
 import org.apartment.entity.PropertyImage;
 import org.apartment.entity.PropertyStatus;
 import org.apartment.entity.PropertyType;
@@ -30,6 +31,9 @@ public class PropertyDto {
 
   @NotNull(message = "Type is required")
   private PropertyType type;
+
+  @NotNull(message = "Type is required")
+  private PropertyDealType propertyDealType;
 
   @NotNull(message = "Price is required")
   @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than zero")

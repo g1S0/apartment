@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apartment.entity.PropertyDealType;
 import org.apartment.entity.PropertyType;
 
 @Data
@@ -17,6 +18,8 @@ public class PropertySearchDto {
   private String keyword;
   private String city;
   private String status;
+  @Getter
+  private PropertyDealType propertyDealType;
   private BigDecimal minPrice;
   private BigDecimal maxPrice;
   private LocalDate startDate;
