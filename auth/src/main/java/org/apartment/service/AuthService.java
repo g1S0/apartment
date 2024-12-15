@@ -4,18 +4,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apartment.dto.LoginDto;
 import org.apartment.dto.AccessRefreshTokensDto;
+import org.apartment.dto.LoginDto;
 import org.apartment.entity.Token;
 import org.apartment.entity.User;
 import org.apartment.repository.TokenRepository;
 import org.apartment.repository.UserRepository;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @AllArgsConstructor
@@ -80,8 +84,8 @@ public class AuthService {
     log.debug("Refreshing token");
     final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-      log.error("Missing or invalid Authorization header");
-      throw new RuntimeException("Missing or invalid Authorization header");
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+          "Missing or invalid Authorization header");
     }
 
     String refreshToken = authHeader.substring(7);
@@ -89,7 +93,7 @@ public class AuthService {
 
     if (userEmail != null) {
       var user = this.userRepository.findByEmail(userEmail)
-          .orElseThrow(() -> new RuntimeException("User not found"));
+          .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
       if (jwtService.isTokenValid(refreshToken, user)) {
         String accessToken = jwtService.generateToken(user, user.getId());
@@ -97,15 +101,15 @@ public class AuthService {
         saveUserToken(user, accessToken);
 
         log.info("Token refreshed successfully for user: {}", userEmail);
-        return AccessRefreshTokensDto.builder().accessToken(accessToken)
-            .refreshToken(refreshToken).build();
+        return AccessRefreshTokensDto.builder().accessToken(accessToken).refreshToken(refreshToken)
+            .build();
       } else {
         log.error("Invalid refresh token for user: {}", userEmail);
-        throw new RuntimeException("Invalid refresh token");
+        throw new BadCredentialsException("Invalid refresh token");
       }
     } else {
       log.error("Invalid refresh token");
-      throw new RuntimeException("Invalid refresh token");
+      throw new BadCredentialsException("Invalid refresh token");
     }
   }
 }
