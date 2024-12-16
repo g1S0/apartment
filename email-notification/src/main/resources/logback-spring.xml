@@ -1,16 +1,16 @@
 <configuration>
-    <property name="LOG_FILE" value="real-estate/logs/application.log" />
+    <property name="LOG_FILE" value="email-notification/logs/application.log" />
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [real-estate-service] - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [email-notification] - %msg%n</pattern>
         </encoder>
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>${LOG_FILE}</file>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [real-estate-service] - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [email-notification] - %msg%n</pattern>
         </encoder>
     </appender>
 

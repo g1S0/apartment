@@ -183,9 +183,53 @@ services:
     networks:
       - app_network
 
+  elasticsearch:
+    image: elasticsearch:8.16.1
+    container_name: elasticsearch
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data/
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+  logstash:
+    image: logstash:8.10.2
+    container_name: logstash
+    volumes:
+      - ./logstash/:/logstash_dir
+      - /Users/glebsoldatenko/Desktop/apartment_rent/api-gateway/logs/:/real-estate/logs
+      - /Users/glebsoldatenko/Desktop/apartment_rent/auth/logs/:/auth/logs
+      - /Users/glebsoldatenko/Desktop/apartment_rent/email-notification/logs/:/email-notification/logs
+      - /Users/glebsoldatenko/Desktop/apartment_rent/real-estate/logs/:/real-estate/logs
+      - /Users/glebsoldatenko/Desktop/apartment_rent/service-registry/logs/:/service-registry/logs
+    command: logstash -f /logstash_dir/logstash.conf
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    environment:
+      - "LOGSTASH_MONITORING=true"
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: kibana:8.10.2
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
 volumes:
   user_db_data:
   real_estate_db_data:
+  elastic_data:
 
 networks:
   app_network:
