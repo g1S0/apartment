@@ -1,26 +1,39 @@
 <configuration>
-    <property name="LOG_FILE" value="real-estate/logs/application.log" />
+    <property name="SERVICE_NAME" value="real-estate"/>
+    <property name="LOG_FILE" value="${SERVICE_NAME}/logs/application.log"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [real-estate-service] - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [${SERVICE_NAME}] - %msg%n</pattern>
         </encoder>
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>${LOG_FILE}</file>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [real-estate-service] - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [${SERVICE_NAME}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="GELF" class="de.siegmar.logbackgelf.GelfUdpAppender">
+        <graylogHost>localhost</graylogHost>
+        <port>12201</port>
+        <facility>${SERVICE_NAME}</facility>
+        <additionalField>environment=production</additionalField>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [${SERVICE_NAME}] - %msg%n</pattern>
         </encoder>
     </appender>
 
     <root level="ERROR">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="GELF"/>
     </root>
 
     <logger name="org.apartment" level="INFO">
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="GELF"/>
     </logger>
 </configuration>

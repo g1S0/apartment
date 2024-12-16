@@ -202,15 +202,11 @@ services:
     container_name: logstash
     volumes:
       - ./logstash/:/logstash_dir
-      - /Users/glebsoldatenko/Desktop/apartment_rent/api-gateway/logs/:/real-estate/logs
-      - /Users/glebsoldatenko/Desktop/apartment_rent/auth/logs/:/auth/logs
-      - /Users/glebsoldatenko/Desktop/apartment_rent/email-notification/logs/:/email-notification/logs
-      - /Users/glebsoldatenko/Desktop/apartment_rent/real-estate/logs/:/real-estate/logs
-      - /Users/glebsoldatenko/Desktop/apartment_rent/service-registry/logs/:/service-registry/logs
     command: logstash -f /logstash_dir/logstash.conf
     ports:
       - "5044:5044"
       - "9600:9600"
+      - "12201:12201/udp"
     environment:
       - "LOGSTASH_MONITORING=true"
     depends_on:
