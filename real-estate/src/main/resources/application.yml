@@ -10,6 +10,9 @@ spring:
     username: ${REAL_ESTATE_USERNAME}
     password: ${REAL_ESTATE_PASSWORD}
     driver-class-name: org.postgresql.Driver
+  servlet:
+    multipart:
+      max-file-size: 5MB
 
 eureka:
   client:
@@ -27,3 +30,8 @@ aws:
     bucket-name: ${REAL_ESTATE_AWS_S3_BUCKET_NAME}
 
 kafka-bootstrap-servers: ${NOTIFICATION_KAFKA_BOOTSTRAP_SERVERS}
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
