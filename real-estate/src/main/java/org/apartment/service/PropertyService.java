@@ -9,7 +9,6 @@ import org.apartment.dto.PropertyListDto;
 import org.apartment.entity.Property;
 import org.apartment.entity.PropertyImage;
 import org.apartment.mapper.PropertyListMapper;
-import org.apartment.mapper.PropertyMapper;
 import org.apartment.repository.PropertyImageRepository;
 import org.apartment.repository.PropertyRepository;
 import org.springframework.data.domain.Page;
@@ -28,7 +27,6 @@ public class PropertyService {
   private final PropertyRepository propertyRepository;
   private final PropertyImageRepository propertyImageRepository;
   private final UploadService uploadService;
-  private final PropertyMapper propertyMapper;
   private final TransactionTemplate transactionTemplate;
 
   @Transactional
