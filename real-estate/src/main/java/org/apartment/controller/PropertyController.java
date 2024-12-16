@@ -26,8 +26,8 @@ public class PropertyController {
   @PostMapping
   public ResponseEntity<Property> createProperty(
       @RequestPart("data") @Valid PropertyDto propertyDto,
-      @RequestParam("image") MultipartFile[] imageFiles, @RequestHeader("X-User-Id") String userId)
-      throws Exception {
+      @RequestParam("image") MultipartFile[] imageFiles,
+      @RequestHeader("X-User-Id") String userId) {
     propertyDto.setPostedBy(userId);
     Property property = PropertyMapper.INSTANCE.toEntity(propertyDto);
     Property createdProperty = propertyService.createProperty(property, imageFiles);
