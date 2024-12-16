@@ -16,7 +16,7 @@
     </appender>
 
     <appender name="GELF" class="de.siegmar.logbackgelf.GelfUdpAppender">
-        <graylogHost>localhost</graylogHost>
+        <graylogHost>${LOGSTASH_HOST}</graylogHost>
         <port>12201</port>
         <facility>${SERVICE_NAME}</facility>
         <additionalField>environment=production</additionalField>

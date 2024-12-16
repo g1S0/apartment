@@ -88,6 +88,7 @@ services:
       - TAPART_EUREKA_INSTANCE_HOSTNAME=${TAPART_EUREKA_INSTANCE_HOSTNAME}
       - TAPART_EUREKA_CLIENT_FETCH_REGISTRY=${TAPART_EUREKA_CLIENT_FETCH_REGISTRY}
       - TAPART_EUREKA_CLIENT_REGISTER_WITH_EUREKA=${TAPART_EUREKA_CLIENT_REGISTER_WITH_EUREKA}
+      - LOGSTASH_HOST=${LOGSTASH_HOST}
     networks:
       - app_network
 
@@ -103,13 +104,15 @@ services:
       - USER_DB_NAME=${USER_DB_NAME}
       - USER_DB_USERNAME=${USER_DB_USERNAME}
       - USER_DB_PASSWORD=${USER_DB_PASSWORD}
+      - HOST_USER_DB_PORT=${HOST_USER_DB_PORT}
       - KAFKA_BOOTSTRAP_SERVERS=${NOTIFICATION_KAFKA_BOOTSTRAP_SERVERS}
       - SECURITY_JWT_SECRET_KEY=${SECURITY_JWT_SECRET_KEY}
       - SECURITY_JWT_EXPIRATION=${SECURITY_JWT_EXPIRATION}
       - SECURITY_JWT_REFRESH_TOKEN_EXPIRATION=${SECURITY_JWT_REFRESH_TOKEN_EXPIRATION}
       - TAPART_EUREKA_PROTOCOL=${TAPART_EUREKA_PROTOCOL}
       - TAPART_EUREKA_INSTANCE_HOSTNAME=${TAPART_EUREKA_INSTANCE_HOSTNAME}
-      - SERVICE_REGISTRY_SERVER_PORT=${SERVICE_REGISTRY_SERVER_PORT}
+      - TAPART_SERVICE_REGISTRY_SERVER_PORT=${TAPART_SERVICE_REGISTRY_SERVER_PORT}
+      - LOGSTASH_HOST=${LOGSTASH_HOST}
     depends_on:
       - user_db
       - tapart-service-registry
@@ -130,6 +133,8 @@ services:
       - REAL_ESTATE_DB_NAME=${REAL_ESTATE_DB_NAME}
       - REAL_ESTATE_USERNAME=${REAL_ESTATE_USERNAME}
       - REAL_ESTATE_PASSWORD=${REAL_ESTATE_PASSWORD}
+      - HOST_REAL_ESTATE_DB_PORT=${HOST_REAL_ESTATE_DB_PORT}
+      - KAFKA_BOOTSTRAP_SERVERS=${NOTIFICATION_KAFKA_BOOTSTRAP_SERVERS}
       - REAL_ESTATE_AWS_S3_ACCESS_KEY=${REAL_ESTATE_AWS_S3_ACCESS_KEY}
       - REAL_ESTATE_AWS_S3_SECRET_KEY=${REAL_ESTATE_AWS_S3_SECRET_KEY}
       - REAL_ESTATE_AWS_S3_REGION=${REAL_ESTATE_AWS_S3_REGION}
@@ -137,7 +142,8 @@ services:
       - REAL_ESTATE_AWS_S3_BUCKET_NAME=${REAL_ESTATE_AWS_S3_BUCKET_NAME}
       - TAPART_EUREKA_PROTOCOL=${TAPART_EUREKA_PROTOCOL}
       - TAPART_EUREKA_INSTANCE_HOSTNAME=${TAPART_EUREKA_INSTANCE_HOSTNAME}
-      - SERVICE_REGISTRY_SERVER_PORT=${SERVICE_REGISTRY_SERVER_PORT}
+      - TAPART_SERVICE_REGISTRY_SERVER_PORT=${TAPART_SERVICE_REGISTRY_SERVER_PORT}
+      - LOGSTASH_HOST=${LOGSTASH_HOST}
     depends_on:
       - real_estate_db
       - tapart-service-registry
@@ -160,7 +166,8 @@ services:
       - KAFKA_BOOTSTRAP_SERVERS=${NOTIFICATION_KAFKA_BOOTSTRAP_SERVERS}
       - TAPART_EUREKA_PROTOCOL=${TAPART_EUREKA_PROTOCOL}
       - TAPART_EUREKA_INSTANCE_HOSTNAME=${TAPART_EUREKA_INSTANCE_HOSTNAME}
-      - SERVICE_REGISTRY_SERVER_PORT=${SERVICE_REGISTRY_SERVER_PORT}
+      - TAPART_SERVICE_REGISTRY_SERVER_PORT=${TAPART_SERVICE_REGISTRY_SERVER_PORT}
+      - LOGSTASH_HOST=${LOGSTASH_HOST}
     depends_on:
       - tapart-service-registry
       - notification_kafka_1
@@ -177,7 +184,8 @@ services:
       - API_GATEWAY_PORT=${API_GATEWAY_PORT}
       - TAPART_EUREKA_PROTOCOL=${TAPART_EUREKA_PROTOCOL}
       - TAPART_EUREKA_INSTANCE_HOSTNAME=${TAPART_EUREKA_INSTANCE_HOSTNAME}
-      - SERVICE_REGISTRY_SERVER_PORT=${SERVICE_REGISTRY_SERVER_PORT}
+      - TAPART_SERVICE_REGISTRY_SERVER_PORT=${TAPART_SERVICE_REGISTRY_SERVER_PORT}
+      - LOGSTASH_HOST=${LOGSTASH_HOST}
     depends_on:
       - tapart-service-registry
     networks:
@@ -189,13 +197,15 @@ services:
     volumes:
       - elastic_data:/usr/share/elasticsearch/data/
     environment:
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-      - xpack.security.enabled=false
-      - xpack.security.http.ssl.enabled=false
+      - discovery.type=${DISCOVERY_TYPE}
+      - ES_JAVA_OPTS=${ES_JAVA_OPTS}
+      - xpack.security.enabled=${XPACK_SECURITY_ENABLED}
+      - xpack.security.http.ssl.enabled=${XPACK_SECURITY_HTTP_SSL_ENABLED}
     ports:
-      - "9200:9200"
+      - "${ELASTICSEARCH_PORT}:${ELASTICSEARCH_PORT}"
       - "9300:9300"
+    networks:
+      - app_network
 
   logstash:
     image: logstash:8.10.2
@@ -204,23 +214,33 @@ services:
       - ./logstash/:/logstash_dir
     command: logstash -f /logstash_dir/logstash.conf
     ports:
-      - "5044:5044"
+      - "${LOGSTASH_PORT}:${LOGSTASH_PORT}"
       - "9600:9600"
       - "12201:12201/udp"
     environment:
-      - "LOGSTASH_MONITORING=true"
+      - LOGSTASH_MONITORING=${LOGSTASH_MONITORING}
     depends_on:
       - elasticsearch
+    networks:
+      - app_network
 
   kibana:
     image: kibana:8.10.2
     container_name: kibana
     environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
     ports:
-      - "5601:5601"
+      - "${KIBANA_PORT}:${KIBANA_PORT}"
     depends_on:
       - elasticsearch
+      - logstash
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
+        tag: "demo2_kibana"
+    networks:
+      - app_network
 
 volumes:
   user_db_data:
