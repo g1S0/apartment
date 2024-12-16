@@ -34,6 +34,10 @@ public class ApiGatewayConfig {
         .route("property-get",
             r -> r.path("/api/v1/property").and().method(HttpMethod.GET).uri("lb://real-estate"))
 
+        // GET /api/v1/property/search
+        .route("property-get",
+            r -> r.path("/api/v1/property/search").and().method(HttpMethod.GET).uri("lb://real-estate"))
+
         .build();
   }
 }
