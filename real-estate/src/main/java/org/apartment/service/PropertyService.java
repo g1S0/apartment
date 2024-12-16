@@ -5,9 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apartment.dto.PropertyDto;
+import org.apartment.dto.PropertyListDto;
 import org.apartment.entity.Property;
 import org.apartment.entity.PropertyImage;
+import org.apartment.mapper.PropertyListMapper;
 import org.apartment.mapper.PropertyMapper;
 import org.apartment.repository.PropertyImageRepository;
 import org.apartment.repository.PropertyRepository;
@@ -70,7 +71,7 @@ public class PropertyService {
     log.info("Successfully deleted files for userId: {}", userId);
   }
 
-  public Page<PropertyDto> getProperties(int page, int size) {
+  public PropertyListDto getProperties(int page, int size) {
     log.info("Fetching properties, page: {}, size: {}", page, size);
 
     Pageable pageable = PageRequest.of(page, size);
@@ -78,6 +79,6 @@ public class PropertyService {
 
     log.info("Found {} properties on page {}.", propertyPage.getTotalElements(), page);
 
-    return propertyPage.map(propertyMapper::toDto);
+    return PropertyListMapper.INSTANCE.toPropertyListDto(propertyPage);
   }
 }
