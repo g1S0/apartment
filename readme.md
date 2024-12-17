@@ -33,8 +33,8 @@
 
 ## Архитектура
 
-![architecture.png](../architecture.png)
+![architecture.png](./images/architecture.png)
 
-## ELKar
-![elk.png](../elk.png)
+## ELK
+![elk.png](./images/elk.png)
 
