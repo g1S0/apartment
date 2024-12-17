@@ -2,13 +2,15 @@ package org.apartment.service;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apartment.dto.PropertyDto;
 import org.apartment.dto.PropertyListDto;
 import org.apartment.entity.Property;
 import org.apartment.entity.PropertyImage;
-import org.apartment.mapper.PropertyListMapper;
+import org.apartment.mapper.PropertyMapper;
 import org.apartment.repository.PropertyImageRepository;
 import org.apartment.repository.PropertyRepository;
 import org.springframework.data.domain.Page;
@@ -28,6 +30,7 @@ public class PropertyService {
   private final PropertyImageRepository propertyImageRepository;
   private final UploadService uploadService;
   private final TransactionTemplate transactionTemplate;
+  private final PropertyMapper propertyMapper;
 
   @Transactional
   public Property createProperty(Property property, MultipartFile[] imageFiles) {
@@ -73,10 +76,16 @@ public class PropertyService {
     log.info("Fetching properties, page: {}, size: {}", page, size);
 
     Pageable pageable = PageRequest.of(page, size);
-    Page<Property> propertyPage = propertyRepository.findAll(pageable);
+    final Page<String> pageOfIds = propertyRepository.findAllIds(pageable);
+    final Set<String> ids = Set.copyOf(pageOfIds.getContent());
+    final List<Property> properties = propertyRepository.findByIdIn(ids);
 
-    log.info("Found {} properties on page {}.", propertyPage.getTotalElements(), page);
+    List<PropertyDto> propertyDtos =
+        properties.stream().map(propertyMapper::toDto).collect(Collectors.toList());
 
-    return PropertyListMapper.INSTANCE.toPropertyListDto(propertyPage);
+    return PropertyListDto.builder().content(propertyDtos)
+        .totalElements((int) pageOfIds.getTotalElements()).totalPages(pageOfIds.getTotalPages())
+        .last(pageOfIds.isLast()).first(pageOfIds.isFirst())
+        .numberOfElements(pageOfIds.getNumberOfElements()).build();
   }
 }

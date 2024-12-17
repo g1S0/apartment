@@ -8,6 +8,8 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -31,6 +33,7 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 @Entity
 @Table(name = "property")
 @Indexed
+@NamedEntityGraph(name = "property_entity-graph", attributeNodes = @NamedAttributeNode("images"))
 public class Property {
   @Id
   @UuidGenerator
