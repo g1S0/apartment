@@ -36,5 +36,13 @@
 ![architecture.png](./images/architecture.png)
 
 ## ELK
+
 ![elk.png](./images/elk.png)
 
+## Покрытие тестами
+
+![auth.png](images/auth.png)
+
+![real_estate.png](images/real_estate.png)
+
+Для ci/cd установлен минимальный уровень покрытия тестами в 70%
