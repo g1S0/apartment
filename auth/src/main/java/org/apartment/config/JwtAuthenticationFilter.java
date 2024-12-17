@@ -44,8 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(@NonNull HttpServletRequest request,
                                   @NonNull HttpServletResponse response,
-                                  @NonNull FilterChain filterChain)
-      throws IOException {
+                                  @NonNull FilterChain filterChain) throws IOException {
     try {
       if (request.getServletPath().contains("/api/v1/auth")
           && !request.getServletPath().contains("/validate-token")) {
@@ -74,20 +73,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
       }
       filterChain.doFilter(request, response);
-    } catch (ExpiredJwtException e) {
+    } catch (ExpiredJwtException | MalformedJwtException | UnsupportedJwtException |
+             AuthenticationException e) {
       ResponseDto<String> errorResponse = new ResponseDto<>(e.getMessage());
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.getWriter().write(convertObjectToJson(errorResponse));
-    } catch (MalformedJwtException e) {
-      ResponseDto<String> errorResponse = new ResponseDto<>("Malformed JWT token");
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.getWriter().write(convertObjectToJson(errorResponse));
-    } catch (UnsupportedJwtException e) {
-      ResponseDto<String> errorResponse = new ResponseDto<>("Unsupported JWT token");
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.getWriter().write(convertObjectToJson(errorResponse));
-    } catch (AuthenticationException e) {
-      ResponseDto<String> errorResponse = new ResponseDto<>("Authentication failed");
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       response.getWriter().write(convertObjectToJson(errorResponse));
     } catch (Exception e) {
