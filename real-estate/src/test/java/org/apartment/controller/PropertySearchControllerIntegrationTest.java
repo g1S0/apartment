@@ -190,9 +190,6 @@ public class PropertySearchControllerIntegrationTest {
 
     List<PropertyDto> properties = objectMapper.readValue(response,
         objectMapper.getTypeFactory().constructCollectionType(List.class, PropertyDto.class));
-    for (PropertyDto propertyDto : properties) {
-      System.out.println(propertyDto);
-    }
     Assertions.assertTrue(
         properties.stream().allMatch(p -> p.getPropertyDealType().equals(PropertyDealType.RENT)));
   }

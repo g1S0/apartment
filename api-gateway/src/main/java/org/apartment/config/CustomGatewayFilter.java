@@ -8,6 +8,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -44,17 +45,24 @@ public class CustomGatewayFilter implements GatewayFilter {
 
     log.info("Authorization header found, validating token");
 
-    return Mono.fromCallable(() -> authClient.validateToken(authHeader))
-        .flatMap(userInfo -> {
-          log.info("Token validated successfully for user: {}", userInfo);
+    return Mono.fromCallable(() -> authClient.validateToken(authHeader)).flatMap(userInfo -> {
+      log.info("Token validated successfully for user: {}", userInfo);
 
-          ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
-              .header("X-User-Id", userInfo)
-              .build();
+      ServerHttpRequest mutatedRequest =
+          exchange.getRequest().mutate().header("X-User-Id", userInfo).build();
 
-          log.info("Passing mutated request to the next filter");
-          return chain.filter(exchange.mutate().request(mutatedRequest).build());
-        })
-        .doOnError(ex -> log.error("Error occurred during token validation", ex));  // Логирование ошибок
+      log.info("Passing mutated request to the next filter");
+      return chain.filter(exchange.mutate().request(mutatedRequest).build());
+    }).onErrorResume(ex -> Mono.defer(() -> {
+      log.error("Error occurred during token validation", ex);
+
+      exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+      exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+      String jsonResponse = "{\"message\": \"Unauthorized\"}";
+
+      return exchange.getResponse().writeWith(
+          Mono.just(exchange.getResponse().bufferFactory().wrap(jsonResponse.getBytes())));
+    }));
   }
 }
